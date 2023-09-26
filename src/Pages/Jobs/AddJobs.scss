@@ -1,0 +1,237 @@
+.post-new-jobs {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin-top: 50px;
+
+  .submit-btn {
+    width: 20% !important;
+    height: 50px;
+    background-color: #1a97f5;
+    color: #fff;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 50px;
+    cursor: pointer;
+  }
+
+  .topic {
+    font-size: 30px;
+    font-weight: 400;
+    color: #000;
+    margin-bottom: 20px;
+  }
+
+  .personal-info-container {
+    max-width: 1050px;
+    width: 100%;
+    background: #fff;
+    border-radius: 12px;
+    margin: 0 20px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
+  }
+  form {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+
+    .form-left {
+      width: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: start;
+      justify-content: start;
+      padding: 20px;
+    }
+    .form-right {
+      width: 50%;
+      display: flex;
+      flex-direction: column;
+
+      padding: 20px;
+    }
+  }
+
+  .personal-info-container .topic {
+    font-size: 18px;
+    font-weight: 500;
+    color: #1a97f5;
+    text-align: start;
+  }
+
+  .personal-info-container .input-box {
+    height: 50px;
+    width: 100%;
+    margin: 20px 0px;
+    position: relative;
+  }
+  .personal-info-container .input-box input,
+  .personal-info-container .input-box select {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    border-radius: 6px;
+    font-size: 16px;
+    outline: none;
+    padding-left: 16px;
+    background: rgba(23, 191, 158, 0.12);
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+  }
+  .personal-info-container .input-box input:focus,
+  .personal-info-container .input-box input:valid,
+  .personal-info-container .input-box select:focus,
+  .personal-info-container .input-box select:valid {
+    border-color: #1a97f5;
+    background-color: #fff;
+  }
+
+  .personal-info-container .input-box label {
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    color: #636c72;
+    font-size: 15px;
+    pointer-events: none;
+    transform: translateY(-50%);
+    transition: all 0.3s ease;
+  }
+  .personal-info-container .input-box input:focus ~ label,
+  .personal-info-container .input-box input:valid ~ label,
+  .personal-info-container .input-box select:focus ~ label,
+  .personal-info-container .input-box select:valid ~ label {
+    top: 0;
+    left: 12px;
+    display: 14px;
+    color: #1a97f5;
+    background: #fff;
+    &:disabled {
+      color: #636c72;
+      cursor: not-allowed;
+    }
+  }
+
+  //   ---------------------------------
+  .personal-info-container .input-box textarea {
+    position: absolute;
+    height: 150%;
+    width: 100%;
+    border-radius: 6px;
+    font-size: 16px;
+    outline: none;
+    padding-left: 16px;
+    padding-top: 10px;
+    background: rgba(23, 191, 158, 0.12);
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+  }
+  .personal-info-container .input-box textarea:focus,
+  .personal-info-container .input-box textarea:valid {
+    border-color: #1a97f5;
+    background-color: #fff;
+  }
+  .personal-info-container .input-box label {
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    color: #636c72;
+    font-size: 15px;
+    pointer-events: none;
+    transform: translateY(-50%);
+    transition: all 0.3s ease;
+  }
+  .personal-info-container .input-box textarea:focus ~ label,
+  .personal-info-container .input-box textarea:valid ~ label {
+    top: 0;
+    left: 12px;
+    display: 14px;
+    color: #1a97f5;
+    background: #fff;
+    &:disabled {
+      color: #636c72;
+      cursor: not-allowed;
+    }
+  }
+
+  //   -----------------------------
+  .error {
+    color: red;
+    font-size: 12px;
+    margin-top: 5px;
+  }
+  .personal-info-container .message-box {
+    min-height: 100px;
+    position: relative;
+  }
+  .personal-info-container .message-box textarea {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    resize: none;
+    background: #fae9fb;
+    border: 2px solid transparent;
+    border-radius: 6px;
+    outline: none;
+    transition: all 0.3s ease;
+  }
+  .personal-info-container .message-box textarea:focus {
+    border-color: #1a97f5;
+    background-color: #fff;
+  }
+  .personal-info-container .message-box label {
+    position: absolute;
+    font-size: 16px;
+    color: #636c72;
+    left: 18px;
+    top: 6px;
+    pointer-events: none;
+    transition: all 0.3s ease;
+  }
+  .personal-info-container .message-box textarea:focus ~ label {
+    left: 12px;
+    top: -10px;
+    color: #1a97f5;
+    font-size: 14px;
+    background: #fff;
+  }
+  .personal-info-container .input-box input[type="submit"] {
+    color: #fff;
+    background: #1a97f5;
+    width: 100%;
+    font-size: 18px;
+    font-weight: 500;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    margin-top: 25px;
+  }
+  .personal-info-container .input-box input[type="submit"]:hover {
+    background-color: rgb(0, 70, 70);
+  }
+  @media (max-width: 1000px) {
+    .personal-info-container .image-box {
+      max-width: 70%;
+    }
+    .personal-info-container {
+      padding: 10px 0;
+    }
+  }
+  @media (max-width: 900px) {
+    .personal-info-container .image-box {
+      display: none;
+    }
+    .personal-info-container form {
+      width: 100%;
+      margin-left: 30px;
+    }
+  }
+}

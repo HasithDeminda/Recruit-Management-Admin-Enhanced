@@ -1,0 +1,106 @@
+.container-feedbacks-content {
+  margin: 50px;
+
+  .feedbacks-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+  }
+
+  .feedbacks-body {
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.35);
+    padding: 25px;
+    border-radius: 20px;
+    display: flex;
+    width: calc(100% - 52%);
+
+    .feedbacks-body-container {
+      width: 100%;
+      min-width: 100%;
+      .feedbacks-body-container-item {
+        width: 100%;
+        min-width: 100%;
+        .feedbacks-body-container-item-header {
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+          align-items: center;
+          width: 100%;
+          height: 100%;
+
+          .feedbacks-body-container-item-header-image {
+            height: 50px;
+            width: 50px;
+            min-height: 50px;
+            min-width: 50px;
+
+            img {
+              height: 100%;
+              width: 100%;
+              object-fit: cover;
+              border-radius: 50%;
+            }
+          }
+
+          .feedbacks-body-container-item-header-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: start;
+            align-items: start;
+            width: 100%;
+            height: 100%;
+            padding: 20px;
+
+            .feedbacks-body-container-item-header-content-name {
+              // font-family: "Inter";
+              font-style: normal;
+              font-weight: 600;
+              font-size: 20px;
+              line-height: 29px;
+              color: #000000;
+            }
+          }
+
+          .feedbacks-body-container-item-header-content-delete {
+            font-size: 20px;
+            line-height: 29px;
+            color: red;
+            cursor: pointer;
+          }
+        }
+
+        .feedbacks-body-container-item-body {
+          background: #ededed;
+          border-radius: 20px;
+          padding: 20px;
+          width: 100%;
+          height: 150px;
+          overflow-y: auto;
+          min-width: 100% !important;
+          .feedbacks-body-container-item-body-content {
+            font-family: "Inter";
+            font-style: normal;
+            font-weight: 400;
+            font-size: 16px;
+            line-height: 30px;
+            color: #000000;
+            min-width: 100% !important;
+          }
+        }
+
+        .given-time {
+          font-style: normal;
+          font-weight: 400;
+          font-size: 12px;
+          line-height: 30px;
+          color: #000000;
+          margin-left: 10px;
+        }
+      }
+    }
+  }
+}

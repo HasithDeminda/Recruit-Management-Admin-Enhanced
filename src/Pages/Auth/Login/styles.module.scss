@@ -1,0 +1,228 @@
+// .admin_login_container {
+//   position: relative;
+//   width: 100%;
+//   min-height: 100vh;
+//   display: flex;
+//   flex-direction: column;
+//   justify-content: flex-start;
+//   // background: url(https://edronalearning.com/public/front-end/edrona-frontend/img/home-page-banner-02.jpg)
+//   //   no-repeat center center fixed;
+//   background-size: cover;
+//   background-position: center;
+// }
+.login_container {
+  width: 100%;
+  min-height: 100vh;
+  margin-top: -25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login_form_container {
+  width: 70%;
+  height: 550px;
+  display: flex;
+  border-radius: 10px;
+  box-shadow: 0px 3px 3px -2px rgb(0 0 0 / 20%),
+    0px 3px 4px 0px rgb(0 0 0 / 14%), 0px 1px 8px 0px rgb(0 0 0 / 12%);
+}
+
+.left {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+
+.form_container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 25px;
+}
+
+.form_container h1 {
+  font-size: 40px;
+  margin-top: 0;
+}
+
+.input {
+  outline: none;
+  border: none;
+  width: 100%;
+  padding: 15px;
+  border-radius: 10px;
+  background-color: #edf5f3;
+  margin: 5px 0;
+  font-size: 14px;
+}
+
+.error_msg {
+  width: 100%;
+  padding: 15px;
+  margin: 5px 0;
+  font-size: 14px;
+  background-color: #f34646;
+  color: white;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.success_msg {
+  width: 100%;
+  padding: 15px;
+  margin: 5px 0;
+  font-size: 14px;
+  background-color: #00b300;
+  color: white;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #1a97f5;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+.right h1 {
+  margin-top: 0;
+  color: white;
+  font-size: 40px;
+  align-self: center;
+}
+
+.white_btn,
+.green_btn {
+  border: none;
+  outline: none;
+  padding: 12px 0;
+  background-color: white;
+  border-radius: 20px;
+  width: 180px;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.green_btn {
+  background-color: #1a97f5;
+  color: white;
+  margin: 10px;
+}
+
+@media screen and (max-width: 1250px) {
+  .input {
+    width: 100% !important;
+  }
+  .right h1 {
+    margin-top: 0;
+    color: white;
+    font-size: 30px;
+    align-self: center;
+  }
+}
+
+@media screen and (max-width: 1100px) {
+  .input {
+    width: 90% !important;
+  }
+  .right h1 {
+    margin-top: 0;
+    color: white;
+    font-size: 30px;
+    align-self: center;
+  }
+  .form_container h1 {
+    font-size: 30px;
+  }
+}
+
+@media screen and (max-width: 900px) {
+  .login_form_container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    height: fit-content;
+    margin: 50px 0px;
+
+    .form_container {
+      margin-top: 50px !important;
+    }
+
+    .right {
+      width: 100%;
+    }
+
+    .right h1 {
+      margin-top: 30px;
+      color: white;
+      font-size: 40px;
+      align-self: center;
+    }
+
+    .green_btn {
+      margin-bottom: 50px;
+    }
+  }
+  .input {
+    width: 120% !important;
+  }
+}
+
+@media screen and (max-width: 700px) {
+  .input {
+    width: 100% !important;
+  }
+  .form_container h1 {
+    font-size: 30px;
+    margin-top: 0;
+  }
+  .right h1 {
+    margin-top: 30px;
+    color: white;
+    font-size: 30px !important;
+    align-self: center;
+  }
+}
+@media screen and (max-width: 550px) {
+  .input {
+    width: 90% !important;
+  }
+  .form_container h1 {
+    font-size: 25px;
+    margin-top: 0;
+  }
+  .right h1 {
+    margin-top: 30px;
+    color: white;
+    font-size: 20px !important;
+    align-self: center;
+  }
+}
+@media screen and (max-width: 450px) {
+  .input {
+    width: 89% !important;
+  }
+  .form_container h1 {
+    font-size: 20px;
+    margin-top: 0;
+  }
+  .right h1 {
+    margin-top: 30px;
+    color: white;
+    font-size: 20px !important;
+    align-self: center;
+  }
+}
