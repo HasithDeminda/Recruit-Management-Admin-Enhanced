@@ -22,6 +22,7 @@ import Notifications from "../../Components/Notifications";
 const AddJobs = () => {
   //Get id from local storage
   const userId = localStorage.getItem("Token");
+  const [btnLoading, setBtnLoading] = useState(false);
 
   const [jobTitle, setJobTitle] = useState("");
   const [companyName, setcompanyName] = useState("");
@@ -80,6 +81,7 @@ const AddJobs = () => {
     e.preventDefault();
 
     try {
+      setBtnLoading(true);
       const spetialCharaterRegex = new RegExp("[^A-Za-z\\s]");
       const emailRegex = new RegExp(
         "^[a-zA-Z0-9._:$!%-]+@[a-zA-Z0-9.-]+.[a-zA-Z]$"
@@ -200,6 +202,7 @@ const AddJobs = () => {
         subCategoryError,
         jobUrgencyError,
       });
+      setBtnLoading(false);
 
       console.log(error);
 
@@ -243,7 +246,7 @@ const AddJobs = () => {
             }
           },
           (error) => {
-            // Handle unsuccessful uploads
+            setBtnLoading(false);
           },
           () => {
             // Handle successful uploads on complete
@@ -298,13 +301,19 @@ const AddJobs = () => {
                     message: "Error adding new job",
                     type: "error",
                   });
+                })
+                .finally(() => {
+                  setBtnLoading(false); // Set loading state to false after request is complete
                 });
             });
           }
         );
+      } else {
+        setBtnLoading(false); // Set loading state to false on validation error
       }
     } catch (error) {
       console.log(error);
+      setBtnLoading(false);
     }
   }
 
@@ -1080,23 +1089,15 @@ const AddJobs = () => {
           </div>
         </form>
       </div>
-      <div
+
+      <button
         className="submit-btn"
-        style={{
-          width: "25%",
-        }}
+        type="submit"
+        onClick={postJob}
+        disabled={btnLoading}
       >
-        <input
-          type="submit"
-          value="Post Job"
-          onClick={postJob}
-          style={{
-            width: "100%",
-            height: "100%",
-            cursor: "pointer",
-          }}
-        />
-      </div>
+        {btnLoading ? "Posting..." : "Post Job"}
+      </button>
       <Notifications notify={notify} setNotify={setNotify} />
     </div>
   );

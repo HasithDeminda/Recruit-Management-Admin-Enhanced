@@ -19,10 +19,14 @@ import {
 } from "react-icons/fa";
 import { useEffect } from "react";
 import Notifications from "../../Components/Notifications";
+import { css } from "@emotion/react";
+import { PropagateLoader } from "react-spinners";
 
 const UpdateJobs = () => {
   //Get id from local storage
   const userId = localStorage.getItem("Token");
+  const [loading, setLoading] = useState(true);
+  const [btnLoading, setBtnLoading] = useState(false);
 
   const { id } = useParams();
 
@@ -50,6 +54,7 @@ const UpdateJobs = () => {
   //Get job post
   useEffect(() => {
     const getJob = async () => {
+      setLoading(true);
       const job = await axios
         .get(
           `https://rwa-webapp.azurewebsites.net/api/jobMgt/GetSpecificJob/${id}`
@@ -81,6 +86,7 @@ const UpdateJobs = () => {
       setCategory(job.category);
       setSubCategory(job.subCategory);
       setjobUrgency(job.jobUrgency);
+      setLoading(false);
     };
 
     getJob();
@@ -121,6 +127,7 @@ const UpdateJobs = () => {
     e.preventDefault();
 
     try {
+      setBtnLoading(true);
       const spetialCharaterRegex = new RegExp("[^A-Za-z\\s]");
       const emailRegex = new RegExp(
         "^[a-zA-Z0-9._:$!%-]+@[a-zA-Z0-9.-]+.[a-zA-Z]$"
@@ -284,7 +291,7 @@ const UpdateJobs = () => {
             }
           },
           (error) => {
-            // Handle unsuccessful uploads
+            setBtnLoading(false);
           },
           () => {
             // Handle successful uploads on complete
@@ -339,812 +346,855 @@ const UpdateJobs = () => {
                     message: "Error updating job",
                     type: "error",
                   });
+                })
+                .finally(() => {
+                  setBtnLoading(false); // Set loading state to false after request is complete
                 });
             });
           }
         );
+      } else {
+        setBtnLoading(false); // Set loading state to false on validation error
       }
     } catch (error) {
       console.log(error);
+      setBtnLoading(false);
     }
   }
 
   return (
-    <div className="post-new-jobs">
-      <div class="topic">Update Job Vacancy</div>
-      <div class="personal-info-container">
-        <form class="addJobForm">
-          <div className="form-left">
-            <div class="topic">Personal Information</div>
-            <div class="input-box">
-              <input
-                type="text"
-                required
-                value={jobTitle}
-                onChange={(e) => {
-                  setJobTitle(e.target.value);
-                }}
-              />
-              <label>Job Title</label>
-            </div>
-            <div class="input-box">
-              <input
-                type="text"
-                required
-                value={companyName}
-                onChange={(e) => {
-                  setcompanyName(e.target.value);
-                }}
-              />
-              <label>Company Name</label>
-            </div>
+    <>
+      {loading ? (
+        <div
+          className="loader"
+          style={{
+            background: "rgba(255, 255, 255, 0.7)",
+            position: "fixed",
+            top: "50%",
+            left: "50%",
+            width: "100%",
+            height: "100%",
+            zIndex: 999,
+          }}
+        >
+          <PropagateLoader
+            color={"#1A97F5"}
+            loading={loading}
+            css={override}
+            size={20}
+          />
+        </div>
+      ) : (
+        <div className="post-new-jobs">
+          <div class="topic">Update Job Vacancy</div>
+          <div class="personal-info-container">
+            <form class="addJobForm">
+              <div className="form-left">
+                <div class="topic">Personal Information</div>
+                <div class="input-box">
+                  <input
+                    type="text"
+                    required
+                    value={jobTitle}
+                    onChange={(e) => {
+                      setJobTitle(e.target.value);
+                    }}
+                  />
+                  <label>Job Title</label>
+                </div>
+                <div class="input-box">
+                  <input
+                    type="text"
+                    required
+                    value={companyName}
+                    onChange={(e) => {
+                      setcompanyName(e.target.value);
+                    }}
+                  />
+                  <label>Company Name</label>
+                </div>
 
-            {error.companyNameError && (
-              <span
-                className="error-message"
-                style={{
-                  fontSize: "12px",
-                  color: "red",
-                  marginTop: "-15px",
-                }}
-              >
-                {error.companyNameError}
-              </span>
-            )}
+                {error.companyNameError && (
+                  <span
+                    className="error-message"
+                    style={{
+                      fontSize: "12px",
+                      color: "red",
+                      marginTop: "-15px",
+                    }}
+                  >
+                    {error.companyNameError}
+                  </span>
+                )}
 
-            <div class="input-box">
-              <select
-                name="jobCat"
-                id="jobCat"
-                required
-                value={category}
-                onChange={(e) => {
-                  setCategory(e.target.value);
-                }}
-              >
-                <option disabled={true} selected={true}>
-                  Select Category
-                </option>
-                <option value="Information Technology">
-                  Information Technology
-                </option>
-                <option value="Business Management">Business Management</option>
-                <option value="Engineering">Engineering</option>
-                <option value="Medicine">Medicine</option>
-                <option value="Architecture">Architecture </option>
-              </select>
-              <label>Category</label>
-            </div>
-
-            {error.categoryError && (
-              <span
-                className="error-message"
-                style={{
-                  fontSize: "12px",
-                  color: "red",
-                  marginTop: "-15px",
-                }}
-              >
-                {error.categoryError}
-              </span>
-            )}
-
-            <div
-              class="input-box"
-              style={{
-                marginLeft: "45px",
-                width: "90%",
-              }}
-            >
-              <select
-                name="jobCatSub"
-                id="jobCatSub"
-                required
-                value={subCategory}
-                onChange={(e) => {
-                  setSubCategory(e.target.value);
-                }}
-              >
-                <option disabled={true} selected={true}>
-                  Select Sub Category
-                </option>
-                {category === "Information Technology" ? (
-                  <>
-                    <option value="Software Engineering">
-                      Software Engineering
-                    </option>
-                    <option value="Web Development">Web Development</option>
-                    <option value="Mobile Development">
-                      Mobile Development
-                    </option>
-                    <option value="Database Management">
-                      Database Management
-                    </option>
-                    <option value="Information Security">
-                      Information Security
-                    </option>
-                    <option value="Network Management">
-                      Network Management
-                    </option>
-                    <option value="Data Science">Data Science</option>
-                    <option value="Artificial Intelligence">
-                      Artificial Intelligence
+                <div class="input-box">
+                  <select
+                    name="jobCat"
+                    id="jobCat"
+                    required
+                    value={category}
+                    onChange={(e) => {
+                      setCategory(e.target.value);
+                    }}
+                  >
+                    <option disabled={true} selected={true}>
+                      Select Category
                     </option>
                     <option value="Information Technology">
                       Information Technology
                     </option>
-                  </>
-                ) : category === "Business Management" ? (
-                  <>
-                    <option value="Accounting">Accounting</option>
-                    <option value="Business Administration">
-                      Business Administration
-                    </option>
                     <option value="Business Management">
                       Business Management
                     </option>
-                    <option value="Business Studies">Business Studies</option>
-                    <option value="Economics">Economics</option>
-                    <option value="Finance">Finance</option>
-                    <option value="Human Resource Management">
-                      Human Resource Management
-                    </option>
-                    <option value="Marketing">Marketing</option>
-                    <option value="Operations Management">
-                      Operations Management
-                    </option>
-                  </>
-                ) : category === "Engineering" ? (
-                  <>
-                    <option value="Aeronautical Engineering">
-                      Aeronautical Engineering
-                    </option>
-                    <option value="Agricultural Engineering">
-                      Agricultural Engineering
-                    </option>
-                    <option value="Biomedical Engineering">
-                      Biomedical Engineering
-                    </option>
-                    <option value="Chemical Engineering">
-                      Chemical Engineering
-                    </option>
-                    <option value="Civil Engineering">Civil Engineering</option>
-                    <option value="Computer Engineering">
-                      Computer Engineering
-                    </option>
-                    <option value="Electrical Engineering">
-                      Electrical Engineering
-                    </option>
-                    <option value="Electronic Engineering">
-                      Electronic Engineering
-                    </option>
-                    <option value="Environmental Engineering">
-                      Environmental Engineering
-                    </option>
-                    <option value="Industrial Engineering">
-                      Industrial Engineering
-                    </option>
-                    <option value="Mechanical Engineering">
-                      Mechanical Engineering
-                    </option>
-                    <option value="Metallurgical Engineering">
-                      Metallurgical Engineering
-                    </option>
-                    <option value="Mining Engineering">
-                      Mining Engineering
-                    </option>
-                    <option value="Nuclear Engineering">
-                      Nuclear Engineering
-                    </option>
-                    <option value="Petroleum Engineering">
-                      Petroleum Engineering
-                    </option>
-                  </>
-                ) : category === "Medicine" ? (
-                  <>
-                    <option value="Anatomy">Anatomy</option>
-                    <option value="Anesthesiology">Anesthesiology</option>
-                    <option value="Cardiology">Cardiology</option>
-                    <option value="Dermatology">Dermatology</option>
-                    <option value="Emergency Medicine">
-                      Emergency Medicine
-                    </option>
-                    <option value="Endocrinology">Endocrinology</option>
-                    <option value="Family Medicine">Family Medicine</option>
-                    <option value="Gastroenterology">Gastroenterology</option>
-                    <option value="General Practice">General Practice</option>
-                    <option value="Geriatrics">Geriatrics</option>
-                    <option value="Hematology">Hematology</option>
-                    <option value="Infectious Disease">
-                      Infectious Disease
-                    </option>
-                    <option value="Internal Medicine">Internal Medicine</option>
-                    <option value="Nephrology">Nephrology</option>
-                    <option value="Neurology">Neurology</option>
-                    <option value="Obstetrics and Gynecology">
-                      Obstetrics and Gynecology
-                    </option>
-                    <option value="Oncology">Oncology</option>
-                    <option value="Ophthalmology">Ophthalmology</option>
-                    <option value="Orthopedics">Orthopedics</option>
-                    <option value="Otolaryngology">Otolaryngology</option>
-                  </>
-                ) : category === "Architecture" ? (
-                  <>
-                    <option value="Architecture">Architecture</option>
-                    <option value="Landscape Architecture">
-                      Landscape Architecture
-                    </option>
-                    <option value="Urban Planning">Urban Planning</option>
-                  </>
-                ) : (
-                  <></>
+                    <option value="Engineering">Engineering</option>
+                    <option value="Medicine">Medicine</option>
+                    <option value="Architecture">Architecture </option>
+                  </select>
+                  <label>Category</label>
+                </div>
+
+                {error.categoryError && (
+                  <span
+                    className="error-message"
+                    style={{
+                      fontSize: "12px",
+                      color: "red",
+                      marginTop: "-15px",
+                    }}
+                  >
+                    {error.categoryError}
+                  </span>
                 )}
-              </select>
-              <label>Sub Category</label>
-            </div>
 
-            {error.subCategoryError && (
-              <span
-                className="error-message"
-                style={{
-                  fontSize: "12px",
-                  color: "red",
-                  marginTop: "-15px",
-                }}
-              >
-                {error.subCategoryError}
-              </span>
-            )}
+                <div
+                  class="input-box"
+                  style={{
+                    marginLeft: "45px",
+                    width: "90%",
+                  }}
+                >
+                  <select
+                    name="jobCatSub"
+                    id="jobCatSub"
+                    required
+                    value={subCategory}
+                    onChange={(e) => {
+                      setSubCategory(e.target.value);
+                    }}
+                  >
+                    <option disabled={true} selected={true}>
+                      Select Sub Category
+                    </option>
+                    {category === "Information Technology" ? (
+                      <>
+                        <option value="Software Engineering">
+                          Software Engineering
+                        </option>
+                        <option value="Web Development">Web Development</option>
+                        <option value="Mobile Development">
+                          Mobile Development
+                        </option>
+                        <option value="Database Management">
+                          Database Management
+                        </option>
+                        <option value="Information Security">
+                          Information Security
+                        </option>
+                        <option value="Network Management">
+                          Network Management
+                        </option>
+                        <option value="Data Science">Data Science</option>
+                        <option value="Artificial Intelligence">
+                          Artificial Intelligence
+                        </option>
+                        <option value="Information Technology">
+                          Information Technology
+                        </option>
+                      </>
+                    ) : category === "Business Management" ? (
+                      <>
+                        <option value="Accounting">Accounting</option>
+                        <option value="Business Administration">
+                          Business Administration
+                        </option>
+                        <option value="Business Management">
+                          Business Management
+                        </option>
+                        <option value="Business Studies">
+                          Business Studies
+                        </option>
+                        <option value="Economics">Economics</option>
+                        <option value="Finance">Finance</option>
+                        <option value="Human Resource Management">
+                          Human Resource Management
+                        </option>
+                        <option value="Marketing">Marketing</option>
+                        <option value="Operations Management">
+                          Operations Management
+                        </option>
+                      </>
+                    ) : category === "Engineering" ? (
+                      <>
+                        <option value="Aeronautical Engineering">
+                          Aeronautical Engineering
+                        </option>
+                        <option value="Agricultural Engineering">
+                          Agricultural Engineering
+                        </option>
+                        <option value="Biomedical Engineering">
+                          Biomedical Engineering
+                        </option>
+                        <option value="Chemical Engineering">
+                          Chemical Engineering
+                        </option>
+                        <option value="Civil Engineering">
+                          Civil Engineering
+                        </option>
+                        <option value="Computer Engineering">
+                          Computer Engineering
+                        </option>
+                        <option value="Electrical Engineering">
+                          Electrical Engineering
+                        </option>
+                        <option value="Electronic Engineering">
+                          Electronic Engineering
+                        </option>
+                        <option value="Environmental Engineering">
+                          Environmental Engineering
+                        </option>
+                        <option value="Industrial Engineering">
+                          Industrial Engineering
+                        </option>
+                        <option value="Mechanical Engineering">
+                          Mechanical Engineering
+                        </option>
+                        <option value="Metallurgical Engineering">
+                          Metallurgical Engineering
+                        </option>
+                        <option value="Mining Engineering">
+                          Mining Engineering
+                        </option>
+                        <option value="Nuclear Engineering">
+                          Nuclear Engineering
+                        </option>
+                        <option value="Petroleum Engineering">
+                          Petroleum Engineering
+                        </option>
+                      </>
+                    ) : category === "Medicine" ? (
+                      <>
+                        <option value="Anatomy">Anatomy</option>
+                        <option value="Anesthesiology">Anesthesiology</option>
+                        <option value="Cardiology">Cardiology</option>
+                        <option value="Dermatology">Dermatology</option>
+                        <option value="Emergency Medicine">
+                          Emergency Medicine
+                        </option>
+                        <option value="Endocrinology">Endocrinology</option>
+                        <option value="Family Medicine">Family Medicine</option>
+                        <option value="Gastroenterology">
+                          Gastroenterology
+                        </option>
+                        <option value="General Practice">
+                          General Practice
+                        </option>
+                        <option value="Geriatrics">Geriatrics</option>
+                        <option value="Hematology">Hematology</option>
+                        <option value="Infectious Disease">
+                          Infectious Disease
+                        </option>
+                        <option value="Internal Medicine">
+                          Internal Medicine
+                        </option>
+                        <option value="Nephrology">Nephrology</option>
+                        <option value="Neurology">Neurology</option>
+                        <option value="Obstetrics and Gynecology">
+                          Obstetrics and Gynecology
+                        </option>
+                        <option value="Oncology">Oncology</option>
+                        <option value="Ophthalmology">Ophthalmology</option>
+                        <option value="Orthopedics">Orthopedics</option>
+                        <option value="Otolaryngology">Otolaryngology</option>
+                      </>
+                    ) : category === "Architecture" ? (
+                      <>
+                        <option value="Architecture">Architecture</option>
+                        <option value="Landscape Architecture">
+                          Landscape Architecture
+                        </option>
+                        <option value="Urban Planning">Urban Planning</option>
+                      </>
+                    ) : (
+                      <></>
+                    )}
+                  </select>
+                  <label>Sub Category</label>
+                </div>
 
-            <div class="input-box">
-              <input
-                type="text"
-                required
-                value={location}
-                onChange={(e) => {
-                  setLocation(e.target.value);
-                }}
-              />
-              <label>Location</label>
-            </div>
+                {error.subCategoryError && (
+                  <span
+                    className="error-message"
+                    style={{
+                      fontSize: "12px",
+                      color: "red",
+                      marginTop: "-15px",
+                    }}
+                  >
+                    {error.subCategoryError}
+                  </span>
+                )}
 
-            {error.locationError && (
-              <span
-                className="error-message"
-                style={{
-                  fontSize: "12px",
-                  color: "red",
-                  marginTop: "-15px",
-                }}
-              >
-                {error.locationError}
-              </span>
-            )}
-            <div
-              class="input-box"
-              style={{
-                width: "100vw",
-                maxWidth: "970px",
-                height: "150px",
-              }}
-            >
-              <textarea
-                type="text"
-                required
-                value={description}
-                onChange={(e) => {
-                  setDescription(e.target.value);
-                }}
-              />
-              <label>Job Description</label>
-            </div>
+                <div class="input-box">
+                  <input
+                    type="text"
+                    required
+                    value={location}
+                    onChange={(e) => {
+                      setLocation(e.target.value);
+                    }}
+                  />
+                  <label>Location</label>
+                </div>
 
-            {error.descriptionError && (
-              <span
-                className="error-message"
-                style={{
-                  fontSize: "12px",
-                  color: "red",
-                  marginTop: "60px",
-                }}
-              >
-                {error.descriptionError}
-              </span>
-            )}
+                {error.locationError && (
+                  <span
+                    className="error-message"
+                    style={{
+                      fontSize: "12px",
+                      color: "red",
+                      marginTop: "-15px",
+                    }}
+                  >
+                    {error.locationError}
+                  </span>
+                )}
+                <div
+                  class="input-box"
+                  style={{
+                    width: "100vw",
+                    maxWidth: "970px",
+                    height: "150px",
+                  }}
+                >
+                  <textarea
+                    type="text"
+                    required
+                    value={description}
+                    onChange={(e) => {
+                      setDescription(e.target.value);
+                    }}
+                  />
+                  <label>Job Description</label>
+                </div>
 
-            <div
-              class="input-box"
-              style={{
-                width: "100vw",
-                maxWidth: "970px",
-                height: "150px",
-                marginTop: "100px",
-              }}
-            >
-              <textarea
-                type="text"
-                required
-                value={about}
-                onChange={(e) => {
-                  setAbout(e.target.value);
-                }}
-              />
-              <label>About the Role</label>
-            </div>
+                {error.descriptionError && (
+                  <span
+                    className="error-message"
+                    style={{
+                      fontSize: "12px",
+                      color: "red",
+                      marginTop: "60px",
+                    }}
+                  >
+                    {error.descriptionError}
+                  </span>
+                )}
 
-            {error.aboutError && (
-              <span
-                className="error-message"
-                style={{
-                  fontSize: "12px",
-                  color: "red",
-                  marginTop: "60px",
-                }}
-              >
-                {error.aboutError}
-              </span>
-            )}
+                <div
+                  class="input-box"
+                  style={{
+                    width: "100vw",
+                    maxWidth: "970px",
+                    height: "150px",
+                    marginTop: "100px",
+                  }}
+                >
+                  <textarea
+                    type="text"
+                    required
+                    value={about}
+                    onChange={(e) => {
+                      setAbout(e.target.value);
+                    }}
+                  />
+                  <label>About the Role</label>
+                </div>
 
-            <div
-              class="input-box"
-              style={{
-                width: "100vw",
-                maxWidth: "970px",
-                height: "150px",
-                marginTop: "100px",
-              }}
-            >
-              <textarea
-                type="text"
-                required
-                value={requirement}
-                onChange={(e) => {
-                  setRequirements(e.target.value);
-                }}
-              />
-              <label>Requirements</label>
-            </div>
-            <br />
+                {error.aboutError && (
+                  <span
+                    className="error-message"
+                    style={{
+                      fontSize: "12px",
+                      color: "red",
+                      marginTop: "60px",
+                    }}
+                  >
+                    {error.aboutError}
+                  </span>
+                )}
 
-            <br />
-            <br />
-            {error.requirementError && (
-              <span
-                className="error-message"
-                style={{
-                  fontSize: "12px",
-                  color: "red",
-                  marginTop: "-15px",
-                }}
-              >
-                {error.requirementError}
-              </span>
-            )}
+                <div
+                  class="input-box"
+                  style={{
+                    width: "100vw",
+                    maxWidth: "970px",
+                    height: "150px",
+                    marginTop: "100px",
+                  }}
+                >
+                  <textarea
+                    type="text"
+                    required
+                    value={requirement}
+                    onChange={(e) => {
+                      setRequirements(e.target.value);
+                    }}
+                  />
+                  <label>Requirements</label>
+                </div>
+                <br />
+
+                <br />
+                <br />
+                {error.requirementError && (
+                  <span
+                    className="error-message"
+                    style={{
+                      fontSize: "12px",
+                      color: "red",
+                      marginTop: "-15px",
+                    }}
+                  >
+                    {error.requirementError}
+                  </span>
+                )}
+              </div>
+
+              <div className="form-right">
+                <div
+                  class="topic"
+                  style={{
+                    visibility: "hidden",
+                  }}
+                >
+                  Personal Information
+                </div>
+                <div class="input-box">
+                  <select
+                    name="jobType"
+                    id="jobType"
+                    required
+                    value={jobType}
+                    onChange={(e) => {
+                      setJobType(e.target.value);
+                    }}
+                  >
+                    <option disabled={true} selected={true}>
+                      Select Job Type
+                    </option>
+                    <option value="Full Time">Full Time</option>
+                    <option value="Part Time">Part Time</option>
+                    <option value="Internship">Internship</option>
+                  </select>
+                  <label>Job Type</label>
+                </div>
+
+                {error.jobTypeError && (
+                  <span
+                    className="error-message"
+                    style={{
+                      fontSize: "12px",
+                      color: "red",
+                      marginTop: "-15px",
+                    }}
+                  >
+                    {error.jobTypeError}
+                  </span>
+                )}
+
+                <div class="input-box">
+                  <select
+                    name="jobUrgency"
+                    id="jobUrgency"
+                    required
+                    value={jobUrgency}
+                    onChange={(e) => {
+                      setjobUrgency(e.target.value);
+                    }}
+                  >
+                    <option disabled={true} selected={true}>
+                      Select Job Urgency
+                    </option>
+                    <option value="Urgent">Urgent</option>
+                    <option value="Not Urgent">Not Urgent</option>
+                  </select>
+                  <label>Job Urgency</label>
+                </div>
+
+                {error.jobUrgencyError && (
+                  <span
+                    className="error-message"
+                    style={{
+                      fontSize: "12px",
+                      color: "red",
+                      marginTop: "-15px",
+                    }}
+                  >
+                    {error.jobUrgencyError}
+                  </span>
+                )}
+
+                <div
+                  class="input-box"
+                  style={{
+                    marginTop: "20px",
+                  }}
+                >
+                  <input
+                    type="datetime"
+                    onFocus={(e) => {
+                      e.target.type = "date";
+                    }}
+                    value={postedDate.toString().slice(0, 10)}
+                    required
+                    onChange={(e) => {
+                      setPostedDate(e.target.value);
+                    }}
+                  />
+                  <label>Posted Date</label>
+                </div>
+
+                {error.postedDateError && (
+                  <span
+                    className="error-message"
+                    style={{
+                      fontSize: "12px",
+                      color: "red",
+                      marginTop: "-15px",
+                    }}
+                  >
+                    {error.postedDateError}
+                  </span>
+                )}
+
+                <div
+                  class="input-box"
+                  style={{
+                    marginTop: "20px",
+                  }}
+                >
+                  <input
+                    type="datetime"
+                    onFocus={(e) => {
+                      e.target.type = "date";
+                    }}
+                    required
+                    value={expDate.toString().slice(0, 10)}
+                    onChange={(e) => {
+                      setExpDate(e.target.value);
+                    }}
+                  />
+                  <label>Post Expire Date</label>
+                </div>
+
+                {error.expDateError && (
+                  <span
+                    className="error-message"
+                    style={{
+                      fontSize: "12px",
+                      color: "red",
+                      marginTop: "-15px",
+                    }}
+                  >
+                    {error.expDateError}
+                  </span>
+                )}
+
+                <span
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "10px",
+                    fontWeight: "200",
+                    marginBottom: "10px",
+                    marginTop: "-10px",
+                  }}
+                >
+                  Upload Poster <MdCloudUpload style={{ color: "red" }} />
+                </span>
+                <div class="input-box">
+                  <input
+                    type="file"
+                    required
+                    style={{ padding: "10px 20px", marginTop: "-22px" }}
+                    autoFocus={true}
+                    // value={descImgUrl.toString()}
+                    onChange={(e) => {
+                      setDescImgUrl(e.target.files[0]);
+                    }}
+                  />
+                </div>
+                {error.descImgUrlError && (
+                  <span
+                    className="error-message"
+                    style={{
+                      fontSize: "12px",
+                      color: "red",
+                      marginTop: "-40px",
+                    }}
+                  >
+                    {error.descImgUrlError}
+                  </span>
+                )}
+              </div>
+            </form>
           </div>
 
-          <div className="form-right">
-            <div
-              class="topic"
-              style={{
-                visibility: "hidden",
-              }}
-            >
-              Personal Information
-            </div>
-            <div class="input-box">
-              <select
-                name="jobType"
-                id="jobType"
-                required
-                value={jobType}
-                onChange={(e) => {
-                  setJobType(e.target.value);
-                }}
-              >
-                <option disabled={true} selected={true}>
-                  Select Job Type
-                </option>
-                <option value="Full Time">Full Time</option>
-                <option value="Part Time">Part Time</option>
-                <option value="Internship">Internship</option>
-              </select>
-              <label>Job Type</label>
-            </div>
-
-            {error.jobTypeError && (
-              <span
-                className="error-message"
-                style={{
-                  fontSize: "12px",
-                  color: "red",
-                  marginTop: "-15px",
-                }}
-              >
-                {error.jobTypeError}
-              </span>
-            )}
-
-            <div class="input-box">
-              <select
-                name="jobUrgency"
-                id="jobUrgency"
-                required
-                value={jobUrgency}
-                onChange={(e) => {
-                  setjobUrgency(e.target.value);
-                }}
-              >
-                <option disabled={true} selected={true}>
-                  Select Job Urgency
-                </option>
-                <option value="Urgent">Urgent</option>
-                <option value="Not Urgent">Not Urgent</option>
-              </select>
-              <label>Job Urgency</label>
-            </div>
-
-            {error.jobUrgencyError && (
-              <span
-                className="error-message"
-                style={{
-                  fontSize: "12px",
-                  color: "red",
-                  marginTop: "-15px",
-                }}
-              >
-                {error.jobUrgencyError}
-              </span>
-            )}
-
-            <div
-              class="input-box"
-              style={{
-                marginTop: "20px",
-              }}
-            >
-              <input
-                type="datetime"
-                onFocus={(e) => {
-                  e.target.type = "date";
-                }}
-                value={postedDate.toString().slice(0, 10)}
-                required
-                onChange={(e) => {
-                  setPostedDate(e.target.value);
-                }}
-              />
-              <label>Posted Date</label>
-            </div>
-
-            {error.postedDateError && (
-              <span
-                className="error-message"
-                style={{
-                  fontSize: "12px",
-                  color: "red",
-                  marginTop: "-15px",
-                }}
-              >
-                {error.postedDateError}
-              </span>
-            )}
-
-            <div
-              class="input-box"
-              style={{
-                marginTop: "20px",
-              }}
-            >
-              <input
-                type="datetime"
-                onFocus={(e) => {
-                  e.target.type = "date";
-                }}
-                required
-                value={expDate.toString().slice(0, 10)}
-                onChange={(e) => {
-                  setExpDate(e.target.value);
-                }}
-              />
-              <label>Post Expire Date</label>
-            </div>
-
-            {error.expDateError && (
-              <span
-                className="error-message"
-                style={{
-                  fontSize: "12px",
-                  color: "red",
-                  marginTop: "-15px",
-                }}
-              >
-                {error.expDateError}
-              </span>
-            )}
-
-            <span
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "10px",
-                fontWeight: "200",
-                marginBottom: "10px",
-                marginTop: "-10px",
-              }}
-            >
-              Upload Poster <MdCloudUpload style={{ color: "red" }} />
-            </span>
-            <div class="input-box">
-              <input
-                type="file"
-                required
-                style={{ padding: "10px 20px", marginTop: "-22px" }}
-                autoFocus={true}
-                // value={descImgUrl.toString()}
-                onChange={(e) => {
-                  setDescImgUrl(e.target.files[0]);
-                }}
-              />
-            </div>
-            {error.descImgUrlError && (
-              <span
-                className="error-message"
-                style={{
-                  fontSize: "12px",
-                  color: "red",
-                  marginTop: "-40px",
-                }}
-              >
-                {error.descImgUrlError}
-              </span>
-            )}
-          </div>
-        </form>
-      </div>
-
-      {/* ----Social Links----- */}
-      <div
-        className="personal-info-container"
-        style={{
-          marginTop: "10px",
-        }}
-      >
-        <form class="addJobForm">
-          <div className="form-left">
-            <div class="topic">Social Links</div>
-            <div
-              class="input-box"
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
-            >
-              <FaEnvelope
-                style={{
-                  color: "#1a97f5",
-                }}
-              />
-              <>
-                <input
-                  type="text"
+          {/* ----Social Links----- */}
+          <div
+            className="personal-info-container"
+            style={{
+              marginTop: "10px",
+            }}
+          >
+            <form class="addJobForm">
+              <div className="form-left">
+                <div class="topic">Social Links</div>
+                <div
+                  class="input-box"
                   style={{
-                    width: "92%",
-                    marginLeft: "40px",
-                  }}
-                  required
-                  value={comEmail}
-                  onChange={(e) => {
-                    setComEmail(e.target.value);
-                  }}
-                />
-                <label
-                  style={{
-                    marginLeft: "40px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
                   }}
                 >
-                  Email
-                </label>
-              </>
-            </div>
+                  <FaEnvelope
+                    style={{
+                      color: "#1a97f5",
+                    }}
+                  />
+                  <>
+                    <input
+                      type="text"
+                      style={{
+                        width: "92%",
+                        marginLeft: "40px",
+                      }}
+                      required
+                      value={comEmail}
+                      onChange={(e) => {
+                        setComEmail(e.target.value);
+                      }}
+                    />
+                    <label
+                      style={{
+                        marginLeft: "40px",
+                      }}
+                    >
+                      Email
+                    </label>
+                  </>
+                </div>
 
-            {error.comEmailError && (
-              <span
-                className="error-message"
-                style={{
-                  fontSize: "12px",
-                  color: "red",
-                  marginTop: "-15px",
-                }}
-              >
-                {error.comEmailError}
-              </span>
-            )}
-            <div
-              class="input-box"
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
-            >
-              <FaLinkedin
-                style={{
-                  color: "#1a97f5",
-                }}
-              />
-              <>
-                <input
-                  type="text"
+                {error.comEmailError && (
+                  <span
+                    className="error-message"
+                    style={{
+                      fontSize: "12px",
+                      color: "red",
+                      marginTop: "-15px",
+                    }}
+                  >
+                    {error.comEmailError}
+                  </span>
+                )}
+                <div
+                  class="input-box"
                   style={{
-                    width: "92%",
-                    marginLeft: "40px",
-                  }}
-                  value={linkedInUrl}
-                  required
-                  onChange={(e) => {
-                    setLinkedinUrl(e.target.value);
-                  }}
-                />
-                <label
-                  style={{
-                    marginLeft: "40px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
                   }}
                 >
-                  LinkedIn
-                </label>
-              </>
-            </div>
+                  <FaLinkedin
+                    style={{
+                      color: "#1a97f5",
+                    }}
+                  />
+                  <>
+                    <input
+                      type="text"
+                      style={{
+                        width: "92%",
+                        marginLeft: "40px",
+                      }}
+                      value={linkedInUrl}
+                      required
+                      onChange={(e) => {
+                        setLinkedinUrl(e.target.value);
+                      }}
+                    />
+                    <label
+                      style={{
+                        marginLeft: "40px",
+                      }}
+                    >
+                      LinkedIn
+                    </label>
+                  </>
+                </div>
 
-            <div
-              class="input-box"
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
-            >
-              <FaGlobe
-                style={{
-                  color: "#1a97f5",
-                }}
-              />
-              <>
-                <input
-                  type="text"
+                <div
+                  class="input-box"
                   style={{
-                    width: "92%",
-                    marginLeft: "40px",
-                  }}
-                  value={webSiteUrl}
-                  required
-                  onChange={(e) => {
-                    setWebSiteUrl(e.target.value);
-                  }}
-                />
-                <label
-                  style={{
-                    marginLeft: "40px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
                   }}
                 >
-                  Company Website
-                </label>
-              </>
-            </div>
-            {error.webSiteUrlError && (
-              <span
-                className="error-message"
-                style={{
-                  fontSize: "12px",
-                  color: "red",
-                  marginTop: "-15px",
-                }}
-              >
-                {error.webSiteUrlError}
-              </span>
-            )}
+                  <FaGlobe
+                    style={{
+                      color: "#1a97f5",
+                    }}
+                  />
+                  <>
+                    <input
+                      type="text"
+                      style={{
+                        width: "92%",
+                        marginLeft: "40px",
+                      }}
+                      value={webSiteUrl}
+                      required
+                      onChange={(e) => {
+                        setWebSiteUrl(e.target.value);
+                      }}
+                    />
+                    <label
+                      style={{
+                        marginLeft: "40px",
+                      }}
+                    >
+                      Company Website
+                    </label>
+                  </>
+                </div>
+                {error.webSiteUrlError && (
+                  <span
+                    className="error-message"
+                    style={{
+                      fontSize: "12px",
+                      color: "red",
+                      marginTop: "-15px",
+                    }}
+                  >
+                    {error.webSiteUrlError}
+                  </span>
+                )}
 
-            <br />
+                <br />
 
-            <br />
-            <br />
+                <br />
+                <br />
+              </div>
+
+              <div className="form-right">
+                <div
+                  class="input-box"
+                  style={{
+                    marginTop: "65px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <FaFacebookF
+                    style={{
+                      color: "#1a97f5",
+                    }}
+                  />
+                  <>
+                    <input
+                      type="text"
+                      style={{
+                        width: "92%",
+                        marginLeft: "40px",
+                      }}
+                      value={facebookUrl}
+                      onChange={(e) => {
+                        setFacebookUrl(e.target.value);
+                      }}
+                    />
+                    <label
+                      style={{
+                        marginLeft: "40px",
+                      }}
+                    >
+                      Facebook
+                    </label>
+                  </>
+                </div>
+
+                <div
+                  class="input-box"
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <FaTwitter
+                    style={{
+                      color: "#1a97f5",
+                    }}
+                  />
+                  <>
+                    <input
+                      type="text"
+                      style={{
+                        width: "92%",
+                        marginLeft: "40px",
+                      }}
+                      value={twitterUrl}
+                      onChange={(e) => {
+                        setTwitterUrl(e.target.value);
+                      }}
+                    />
+                    <label
+                      style={{
+                        marginLeft: "40px",
+                      }}
+                    >
+                      Twitter
+                    </label>
+                  </>
+                </div>
+              </div>
+            </form>
           </div>
 
-          <div className="form-right">
-            <div
-              class="input-box"
-              style={{
-                marginTop: "65px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
-            >
-              <FaFacebookF
-                style={{
-                  color: "#1a97f5",
-                }}
-              />
-              <>
-                <input
-                  type="text"
-                  style={{
-                    width: "92%",
-                    marginLeft: "40px",
-                  }}
-                  value={facebookUrl}
-                  onChange={(e) => {
-                    setFacebookUrl(e.target.value);
-                  }}
-                />
-                <label
-                  style={{
-                    marginLeft: "40px",
-                  }}
-                >
-                  Facebook
-                </label>
-              </>
-            </div>
+          <button
+            className="submit-btn"
+            type="submit"
+            onClick={updateJob}
+            disabled={btnLoading}
+          >
+            {btnLoading ? "Updating..." : "Update Job"}
+          </button>
 
-            <div
-              class="input-box"
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
-            >
-              <FaTwitter
-                style={{
-                  color: "#1a97f5",
-                }}
-              />
-              <>
-                <input
-                  type="text"
-                  style={{
-                    width: "92%",
-                    marginLeft: "40px",
-                  }}
-                  value={twitterUrl}
-                  onChange={(e) => {
-                    setTwitterUrl(e.target.value);
-                  }}
-                />
-                <label
-                  style={{
-                    marginLeft: "40px",
-                  }}
-                >
-                  Twitter
-                </label>
-              </>
-            </div>
-          </div>
-        </form>
-      </div>
-      <div
-        className="submit-btn"
-        style={{
-          width: "25%",
-        }}
-      >
-        <input
-          type="submit"
-          value="Update Job"
-          onClick={updateJob}
-          style={{
-            width: "100%",
-            height: "100%",
-            cursor: "pointer",
-          }}
-        />
-      </div>
-      <Notifications notify={notify} setNotify={setNotify} />
-    </div>
+          <Notifications notify={notify} setNotify={setNotify} />
+        </div>
+      )}
+    </>
   );
 };
+
+const override = css`
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+`;
 
 export default UpdateJobs;

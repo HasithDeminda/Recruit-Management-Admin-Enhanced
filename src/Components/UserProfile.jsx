@@ -1,10 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { MdOutlineCancel } from "react-icons/md";
-
 import { Button } from ".";
-import { userProfileData } from "../Data/dummy";
-import { useStateContext } from "../Contexts/ContextProvider";
-import avatar from "../Data/avatar.jpg";
 import { Link, useParams } from "react-router-dom";
 import { FaUser } from "react-icons/fa";
 import { BsShield } from "react-icons/bs";
@@ -85,6 +81,7 @@ const UserProfile = () => {
           borderRadius="50%"
         />
       </div>
+
       <div className="flex gap-5 items-center mt-6 border-color border-b-1 pb-6">
         <img
           className="rounded-full h-24 w-24"
@@ -96,17 +93,18 @@ const UserProfile = () => {
         />
         <div>
           <p className="font-semibold text-xl dark:text-gray-200">
-            {user.fullName}
+            {user.fullName || "User Name"}
           </p>
           <p className="text-gray-500 text-sm dark:text-gray-400">
             {" "}
             Administrator{" "}
           </p>
           <p className="text-gray-500 text-sm font-semibold dark:text-gray-400">
-            {user.email}
+            {user.email || "User Email"}
           </p>
         </div>
       </div>
+
       <div>
         {userProfileData.map((item, index) => (
           <Link to={item.Link} key={index}>
@@ -116,7 +114,10 @@ const UserProfile = () => {
             >
               <button
                 type="button"
-                style={{ color: item.iconColor, backgroundColor: item.iconBg }}
+                style={{
+                  color: item.iconColor,
+                  backgroundColor: item.iconBg,
+                }}
                 className=" text-xl rounded-lg p-3 hover:bg-light-gray"
               >
                 {item.icon}

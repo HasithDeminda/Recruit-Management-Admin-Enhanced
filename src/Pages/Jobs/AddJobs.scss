@@ -21,6 +21,12 @@
     cursor: pointer;
   }
 
+  .submit-btn:disabled {
+    background-color: #ccc;
+    color: #fff;
+    cursor: not-allowed;
+  }
+
   .topic {
     font-size: 30px;
     font-weight: 400;

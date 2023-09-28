@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import styles from "./styles.module.scss";
@@ -6,6 +6,7 @@ import styles from "./styles.module.scss";
 const Login = () => {
   const [data, setData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleChange = ({ currentTarget: input }) => {
     setData({ ...data, [input.name]: input.value });
@@ -13,6 +14,7 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const url = "https://rwa-webapp.azurewebsites.net/api/admin/AdminLogin";
       const { data: res } = await axios.post(url, data);
@@ -27,6 +29,8 @@ const Login = () => {
       ) {
         setError(error.response.data.message);
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -74,8 +78,12 @@ const Login = () => {
                 </span>
               </div>
               {error && <div className={styles.error_msg}>{error}</div>}
-              <button type="submit" className={styles.green_btn}>
-                Sign In
+              <button
+                type="submit"
+                className={styles.green_btn}
+                disabled={loading}
+              >
+                {loading ? "Signing In..." : "Sign In"}
               </button>
             </form>
           </div>

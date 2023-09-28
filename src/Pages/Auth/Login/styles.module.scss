@@ -121,6 +121,12 @@
   margin: 10px;
 }
 
+button:disabled {
+  background-color: #bfbfbf;
+  color: white;
+  cursor: not-allowed;
+}
+
 @media screen and (max-width: 1250px) {
   .input {
     width: 100% !important;

@@ -13,6 +13,7 @@ const ForgotPw = () => {
   });
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   const handleChange = ({ currentTarget: input }) => {
     setData({ ...data, [input.name]: input.value });
@@ -20,6 +21,7 @@ const ForgotPw = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const url = "https://rwa-webapp.azurewebsites.net/api/admin/EmailCheck";
       const { data: res } = await axios.post(url, data);
@@ -33,6 +35,8 @@ const ForgotPw = () => {
       ) {
         setError(error.response.data.message);
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -80,8 +84,12 @@ const ForgotPw = () => {
               />
 
               {error && <div className={styles.error_msg}>{error}</div>}
-              <button type="submit" className={styles.green_btn}>
-                Send
+              <button
+                type="submit"
+                className={styles.green_btn}
+                disabled={loading}
+              >
+                {loading ? "Sending..." : "Send"}
               </button>
 
               {res && res === "success" ? (
