@@ -132,6 +132,7 @@ const UpdateJobs = () => {
       const emailRegex = new RegExp(
         "^[a-zA-Z0-9._:$!%-]+@[a-zA-Z0-9.-]+.[a-zA-Z]$"
       );
+      const validationRegex = /^(?!\s*$).+/;
 
       if (!jobTitle) {
         var jobTitleError = "Job Title is required";
@@ -427,7 +428,7 @@ const UpdateJobs = () => {
                   </span>
                 )}
 
-                <div class="input-box">
+                <div className="input-box">
                   <select
                     name="jobCat"
                     id="jobCat"
@@ -435,9 +436,10 @@ const UpdateJobs = () => {
                     value={category}
                     onChange={(e) => {
                       setCategory(e.target.value);
+                      setError({ ...error, categoryError: "" });
                     }}
                   >
-                    <option disabled={true} selected={true}>
+                    <option value="default" disabled>
                       Select Category
                     </option>
                     <option value="Information Technology">
@@ -448,7 +450,7 @@ const UpdateJobs = () => {
                     </option>
                     <option value="Engineering">Engineering</option>
                     <option value="Medicine">Medicine</option>
-                    <option value="Architecture">Architecture </option>
+                    <option value="Architecture">Architecture</option>
                   </select>
                   <label>Category</label>
                 </div>
