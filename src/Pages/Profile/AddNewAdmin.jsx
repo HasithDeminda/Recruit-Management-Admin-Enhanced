@@ -28,6 +28,9 @@ const AddNewAdmin = () => {
     emailError: "",
   });
 
+  //Button Loader
+  const [btnLoader, setBtnLoader] = useState(false);
+
   //Alert Notification
   const [notify, setNotify] = useState({
     isOpen: false,
@@ -37,15 +40,19 @@ const AddNewAdmin = () => {
 
   const AdminRegister = async (e) => {
     e.preventDefault();
+    setBtnLoader(true);
     try {
+      const maxLengthRegex = /^.{1,50}$/;
       const PhoneNumberRegex = new RegExp("^[0-9-+]{9,15}$");
       const EmailRegex = new RegExp(
         "^[a-zA-Z0-9._:$!%-]+@[a-zA-Z0-9.-]+.[a-zA-Z]$"
       );
-      const spetialCharaterRegex = new RegExp("[^A-Za-z\\s]");
+      const spetialCharaterRegex = new RegExp("[^A-Za-z\\s\\-\\,\\|]"); //Allowes only - , | and space
       if (spetialCharaterRegex.test(firstName)) {
         var firstNameError =
           "First name can not contain special characters and numbers";
+      } else if (!maxLengthRegex.test(firstName)) {
+        var firstNameError = "First name must be less than 50 characters";
       } else {
         var firstNameError = "";
       }
@@ -53,6 +60,8 @@ const AddNewAdmin = () => {
       if (spetialCharaterRegex.test(lastName)) {
         var lastNameError =
           "Last name can not contain special characters and numbers";
+      } else if (!maxLengthRegex.test(lastName)) {
+        var lastNameError = "Last name must be less than 50 characters";
       } else {
         var lastNameError = "";
       }
@@ -107,9 +116,7 @@ const AddNewAdmin = () => {
                     break;
                 }
               },
-              (error) => {
-                // Handle unsuccessful uploads
-              },
+              (error) => {},
               () => {
                 // Handle successful uploads on complete
                 // For instance, get the download URL: https://firebasestorage.googleapis.com/...
@@ -200,6 +207,7 @@ const AddNewAdmin = () => {
         });
       }
     }
+    setBtnLoader(false);
   };
 
   return (
@@ -207,7 +215,7 @@ const AddNewAdmin = () => {
       <div className="topic-admin">Create New Admin</div>
 
       <div className="personal-info-container">
-        <form className="addNewAdmin-form" onSubmit={AdminRegister}>
+        <form className="addNewAdmin-form">
           <div className="form-left">
             <div className="topic mb-4">Personal Information</div>
             <div className="input-box">
@@ -222,7 +230,7 @@ const AddNewAdmin = () => {
             </div>
 
             {customErrors.firstNameError && (
-              <div
+              <span
                 style={{
                   fontSize: "12px",
                   color: "red",
@@ -230,7 +238,7 @@ const AddNewAdmin = () => {
                 }}
               >
                 {customErrors.firstNameError}
-              </div>
+              </span>
             )}
             <div className="input-box">
               <input
@@ -383,17 +391,23 @@ const AddNewAdmin = () => {
               </div>
             )}
 
-            <input
+            <button
               type="submit"
+              disabled={btnLoader}
+              onClick={AdminRegister}
               className="submit-btn"
               style={{
                 minWidth: "40%",
-                cursor: "pointer",
+                cursor: btnLoader ? "not-allowed" : "pointer", // Change cursor when disabled
                 marginLeft: "-120px",
                 marginTop: "110px",
+                backgroundColor: btnLoader ? "#ccc" : "#1a97f5", // Change background color when disabled
+                height: "40px",
+                filter: "drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))",
               }}
-              value="Create New Admin"
-            />
+            >
+              {btnLoader ? "Creating..." : "Create New Admin"}
+            </button>
           </div>
         </form>
       </div>
