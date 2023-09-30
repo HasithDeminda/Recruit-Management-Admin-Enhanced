@@ -12,9 +12,12 @@ import { GiClick } from "react-icons/gi";
 import ConfirmDialog from "../../Components/ConfirmDialog";
 import Notifications from "../../Components/Notifications";
 import { TbReportAnalytics } from "react-icons/tb";
+import { css } from "@emotion/react";
+import { PropagateLoader } from "react-spinners";
 
 const Users = () => {
   const [users, setUsers] = useState("");
+  const [loading, setLoading] = useState(true);
 
   //Get id from local storage
   const userId = localStorage.getItem("Token");
@@ -35,6 +38,7 @@ const Users = () => {
 
   useEffect(() => {
     const Users = async () => {
+      setLoading(true);
       const allUsers = await axios
         .get("https://rwa-webapp.azurewebsites.net/api/userMgt/GetAllUsers", {
           headers: {
@@ -68,6 +72,7 @@ const Users = () => {
         });
       }
       setUsers(temp);
+      setLoading(false);
     };
     Users();
   }, []);
@@ -318,128 +323,158 @@ const Users = () => {
   ];
 
   return (
-    <div
-      style={{
-        overflowY: "hidden",
-        width: "95%",
-        margin: "auto",
-      }}
-    >
-      <div
-        style={{
-          width: "100%",
-          marginTop: "20px",
-          backgroundColor: "white",
-          padding: "25px",
-          borderRadius: "20px",
-        }}
-      >
+    <>
+      {loading ? (
         <div
+          className="loader"
           style={{
+            background: "rgba(255, 255, 255, 0.7)",
+            position: "fixed",
+            top: "50%",
+            left: "50%",
             width: "100%",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
+            height: "100%",
+            zIndex: 999,
           }}
         >
-          <div>
-            <Header category="Page" title="Registered Users 🤵" />
-          </div>
+          <PropagateLoader
+            color={"#1A97F5"}
+            loading={loading}
+            css={override}
+            size={20}
+          />
         </div>
-        <br />
+      ) : (
         <div
-          className="search-reports"
           style={{
-            width: "100%",
-            display: "flex",
-            justifyContent: "flex-end",
-            alignItems: "center",
-            marginBottom: "50px",
+            overflowY: "hidden",
+            width: "95%",
+            margin: "auto",
           }}
         >
           <div
-            className="search-reports-container"
             style={{
-              display: "flex",
-              alignItems: "center",
+              width: "100%",
+              marginTop: "20px",
+              backgroundColor: "white",
+              padding: "25px",
+              borderRadius: "20px",
             }}
           >
-            <input
-              type="text"
-              placeholder="Search"
+            <div
               style={{
-                width: "300px",
-                height: "40px",
-                borderRadius: "10px",
-                border: "1px solid #ccc",
-                padding: "0 10px",
-                outline: "none",
-              }}
-              onChange={onSearch}
-            />
-            <button
-              className="btn btn-primary"
-              style={{
-                backgroundColor: "#1A97F5",
-                color: "white",
+                width: "100%",
                 display: "flex",
+                justifyContent: "space-between",
                 alignItems: "center",
-                justifyContent: "center",
-                padding: "0 10px",
-                width: "100px",
-                height: "35px",
-                borderRadius: "10px",
-                marginLeft: "-102px",
               }}
-              disabled
             >
-              Search
-            </button>
-          </div>
+              <div>
+                <Header category="Page" title="Registered Users 🤵" />
+              </div>
+            </div>
+            <br />
+            <div
+              className="search-reports"
+              style={{
+                width: "100%",
+                display: "flex",
+                justifyContent: "flex-end",
+                alignItems: "center",
+                marginBottom: "50px",
+              }}
+            >
+              <div
+                className="search-reports-container"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <input
+                  type="text"
+                  placeholder="Search"
+                  style={{
+                    width: "300px",
+                    height: "40px",
+                    borderRadius: "10px",
+                    border: "1px solid #ccc",
+                    padding: "0 10px",
+                    outline: "none",
+                  }}
+                  onChange={onSearch}
+                />
+                <button
+                  className="btn btn-primary"
+                  style={{
+                    backgroundColor: "#1A97F5",
+                    color: "white",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    padding: "0 10px",
+                    width: "100px",
+                    height: "35px",
+                    borderRadius: "10px",
+                    marginLeft: "-102px",
+                  }}
+                  disabled
+                >
+                  Search
+                </button>
+              </div>
 
-          <button
-            onClick={onReportGenarate}
-            className="btn btn-primary"
-            style={{
-              backgroundColor: "#1A97F5",
-              color: "white",
-              borderRadius: "50px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              width: "180px",
-              gap: "0.5rem",
-              height: "40px",
-              marginLeft: "20px",
-            }}
-          >
-            <TbReportAnalytics />
-            Generate Report
-          </button>
-        </div>
-        <div style={{ height: 550, width: "100%", marginTop: "-30px" }}>
-          <DataGrid
-            rows={users}
-            rowHeight={75}
-            columns={columns}
-            pageSize={6}
-            rowsPerPageOptions={[6]}
-            disablecheckboxSelection
-            disableSelectionOnClick
-            style={{
-              overflowX: "auto",
-              padding: "0px 0px 0px 20px",
-            }}
+              <button
+                onClick={onReportGenarate}
+                className="btn btn-primary"
+                style={{
+                  backgroundColor: "#1A97F5",
+                  color: "white",
+                  borderRadius: "50px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: "180px",
+                  gap: "0.5rem",
+                  height: "40px",
+                  marginLeft: "20px",
+                }}
+              >
+                <TbReportAnalytics />
+                Generate Report
+              </button>
+            </div>
+            <div style={{ height: 550, width: "100%", marginTop: "-30px" }}>
+              <DataGrid
+                rows={users}
+                rowHeight={75}
+                columns={columns}
+                pageSize={6}
+                rowsPerPageOptions={[6]}
+                disablecheckboxSelection
+                disableSelectionOnClick
+                style={{
+                  overflowX: "auto",
+                  padding: "0px 0px 0px 20px",
+                }}
+              />
+            </div>
+          </div>
+          <Notifications notify={notify} setNotify={setNotify} />
+          <ConfirmDialog
+            confirmDialog={confirmDialog}
+            setConfirmDialog={setConfirmDialog}
           />
         </div>
-      </div>
-      <Notifications notify={notify} setNotify={setNotify} />
-      <ConfirmDialog
-        confirmDialog={confirmDialog}
-        setConfirmDialog={setConfirmDialog}
-      />
-    </div>
+      )}
+    </>
   );
 };
-
+const override = css`
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+`;
 export default Users;
