@@ -128,16 +128,22 @@ const UpdateJobs = () => {
 
     try {
       setBtnLoading(true);
-      const spetialCharaterRegex = new RegExp("[^A-Za-z\\s]");
+
+      //Regex for validation
+      const spetialCharaterRegex = new RegExp("[^A-Za-z\\s\\-\\,\\|]"); //Allowes only - , | and space
       const emailRegex = new RegExp(
         "^[a-zA-Z0-9._:$!%-]+@[a-zA-Z0-9.-]+.[a-zA-Z]$"
       );
-      const validationRegex = /^(?!\s*$).+/;
+      const maxLengthRegex = /^.{1,50}$/;
+
+      const urlRegex = new RegExp("^(https?|ftp)://[^\\s/$.?#].[^\\s]*$");
 
       if (!jobTitle) {
         var jobTitleError = "Job Title is required";
       } else if (spetialCharaterRegex.test(jobTitle)) {
         var jobTitleError = "Job Title cannot contain special characters";
+      } else if (!maxLengthRegex.test(jobTitle)) {
+        var jobTitleError = "Job Title cannot exceed 50 characters";
       } else {
         jobTitleError = "";
       }
@@ -146,17 +152,23 @@ const UpdateJobs = () => {
         var companyNameError = "Company Name is required";
       } else if (spetialCharaterRegex.test(companyName)) {
         var companyNameError = "Company Name cannot contain special characters";
+      } else if (!maxLengthRegex.test(companyName)) {
+        var companyNameError = "Company Name cannot exceed 50 characters";
       } else {
         companyNameError = "";
       }
 
-      if (category === "Select Category") {
+      if (!category) {
+        var categoryError = "Job Category is required";
+      } else if (category === "Select Category") {
         var categoryError = "Job Category is required";
       } else {
         categoryError = "";
       }
 
-      if (subCategory === "Select Sub Category") {
+      if (!subCategory) {
+        var subCategoryError = "Sub Category is required";
+      } else if (subCategory === "Select Sub Category") {
         var subCategoryError = "Sub Category is required";
       } else {
         subCategoryError = "";
@@ -166,17 +178,23 @@ const UpdateJobs = () => {
         var locationError = "Location is required";
       } else if (spetialCharaterRegex.test(location)) {
         var locationError = "Location cannot contain special characters";
+      } else if (!maxLengthRegex.test(location)) {
+        var locationError = "Location cannot exceed 50 characters";
       } else {
         locationError = "";
       }
 
-      if (jobType === "Select Job Type") {
+      if (!jobType) {
+        var jobTypeError = "Job Type is required";
+      } else if (jobType === "Select Job Type") {
         var jobTypeError = "Job Type is required";
       } else {
         jobTypeError = "";
       }
 
-      if (jobUrgency === "Select Job Urgency") {
+      if (!jobUrgency) {
+        var jobUrgencyError = "Job Urgency is required";
+      } else if (jobUrgency === "Select Job Urgency") {
         var jobUrgencyError = "Job Urgency is required";
       } else {
         jobUrgencyError = "";
@@ -228,6 +246,8 @@ const UpdateJobs = () => {
 
       if (!webSiteUrl) {
         var webSiteUrlError = "Website Url is required";
+      } else if (!urlRegex.test(webSiteUrl)) {
+        var webSiteUrlError = "Website Url is invalid";
       } else {
         webSiteUrlError = "";
       }

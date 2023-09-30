@@ -217,7 +217,7 @@ const FeaturedJobs = () => {
               className="userlist-img"
               src={
                 params.row.descImgUrl ||
-                "https://us.123rf.com/450wm/pavelstasevich/pavelstasevich1811/pavelstasevich181101028/112815904-no-image-available-icon-flat-vector-illustration.jpg?ver=6"
+                "https://media.istockphoto.com/id/1248674290/vector/we-are-hiring-door-signage-for-business-unlock-promotion-vector-design.jpg?s=612x612&w=0&k=20&c=1aJ8euYTbHSloLmNIszULFFZ9SV8H8_c0zs4gnihTv4="
               }
               alt=""
               style={{
