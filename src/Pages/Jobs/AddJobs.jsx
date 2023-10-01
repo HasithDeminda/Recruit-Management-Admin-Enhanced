@@ -22,6 +22,7 @@ import Notifications from "../../Components/Notifications";
 const AddJobs = () => {
   //Get id from local storage
   const userId = localStorage.getItem("Token");
+  const [btnLoading, setBtnLoading] = useState(false);
 
   const [jobTitle, setJobTitle] = useState("");
   const [companyName, setcompanyName] = useState("");
@@ -80,15 +81,23 @@ const AddJobs = () => {
     e.preventDefault();
 
     try {
-      const spetialCharaterRegex = new RegExp("[^A-Za-z\\s]");
+      setBtnLoading(true);
+
+      //Regex for validation
+      const spetialCharaterRegex = new RegExp("[^A-Za-z\\s\\-\\,\\|]"); //Allowes only - , | and space
       const emailRegex = new RegExp(
         "^[a-zA-Z0-9._:$!%-]+@[a-zA-Z0-9.-]+.[a-zA-Z]$"
       );
+      const maxLengthRegex = /^.{1,50}$/;
+
+      const urlRegex = new RegExp("^(https?|ftp)://[^\\s/$.?#].[^\\s]*$");
 
       if (!jobTitle) {
         var jobTitleError = "Job Title is required";
       } else if (spetialCharaterRegex.test(jobTitle)) {
         var jobTitleError = "Job Title cannot contain special characters";
+      } else if (!maxLengthRegex.test(jobTitle)) {
+        var jobTitleError = "Job Title cannot exceed 50 characters";
       } else {
         jobTitleError = "";
       }
@@ -97,17 +106,23 @@ const AddJobs = () => {
         var companyNameError = "Company Name is required";
       } else if (spetialCharaterRegex.test(companyName)) {
         var companyNameError = "Company Name cannot contain special characters";
+      } else if (!maxLengthRegex.test(companyName)) {
+        var companyNameError = "Company Name cannot exceed 50 characters";
       } else {
         companyNameError = "";
       }
 
-      if (category === "Select Category") {
+      if (!category) {
+        var categoryError = "Job Category is required";
+      } else if (category === "Select Category") {
         var categoryError = "Job Category is required";
       } else {
         categoryError = "";
       }
 
-      if (subCategory === "Select Sub Category") {
+      if (!subCategory) {
+        var subCategoryError = "Sub Category is required";
+      } else if (subCategory === "Select Sub Category") {
         var subCategoryError = "Sub Category is required";
       } else {
         subCategoryError = "";
@@ -117,17 +132,23 @@ const AddJobs = () => {
         var locationError = "Location is required";
       } else if (spetialCharaterRegex.test(location)) {
         var locationError = "Location cannot contain special characters";
+      } else if (!maxLengthRegex.test(location)) {
+        var locationError = "Location cannot exceed 50 characters";
       } else {
         locationError = "";
       }
 
-      if (jobType === "Select Job Type") {
+      if (!jobType) {
+        var jobTypeError = "Job Type is required";
+      } else if (jobType === "Select Job Type") {
         var jobTypeError = "Job Type is required";
       } else {
         jobTypeError = "";
       }
 
-      if (jobUrgency === "Select Job Urgency") {
+      if (!jobUrgency) {
+        var jobUrgencyError = "Job Urgency is required";
+      } else if (jobUrgency === "Select Job Urgency") {
         var jobUrgencyError = "Job Urgency is required";
       } else {
         jobUrgencyError = "";
@@ -179,6 +200,8 @@ const AddJobs = () => {
 
       if (!webSiteUrl) {
         var webSiteUrlError = "Website Url is required";
+      } else if (!urlRegex.test(webSiteUrl)) {
+        var webSiteUrlError = "Website Url is invalid";
       } else {
         webSiteUrlError = "";
       }
@@ -200,6 +223,7 @@ const AddJobs = () => {
         subCategoryError,
         jobUrgencyError,
       });
+      setBtnLoading(false);
 
       console.log(error);
 
@@ -243,7 +267,7 @@ const AddJobs = () => {
             }
           },
           (error) => {
-            // Handle unsuccessful uploads
+            setBtnLoading(false);
           },
           () => {
             // Handle successful uploads on complete
@@ -298,13 +322,19 @@ const AddJobs = () => {
                     message: "Error adding new job",
                     type: "error",
                   });
+                })
+                .finally(() => {
+                  setBtnLoading(false); // Set loading state to false after request is complete
                 });
             });
           }
         );
+      } else {
+        setBtnLoading(false); // Set loading state to false on validation error
       }
     } catch (error) {
       console.log(error);
+      setBtnLoading(false);
     }
   }
 
@@ -321,6 +351,7 @@ const AddJobs = () => {
                 required
                 onChange={(e) => {
                   setJobTitle(e.target.value);
+                  setError({ ...error, jobTitleError: "" });
                 }}
               />
               <label>Job Title</label>
@@ -345,6 +376,7 @@ const AddJobs = () => {
                 required
                 onChange={(e) => {
                   setcompanyName(e.target.value);
+                  setError({ ...error, companyNameError: "" });
                 }}
               />
               <label>Company Name</label>
@@ -370,6 +402,7 @@ const AddJobs = () => {
                 required
                 onChange={(e) => {
                   setCategory(e.target.value);
+                  setError({ ...error, categoryError: "" });
                 }}
               >
                 <option disabled={true} selected={true}>
@@ -411,6 +444,7 @@ const AddJobs = () => {
                 required
                 onChange={(e) => {
                   setSubCategory(e.target.value);
+                  setError({ ...error, subCategoryError: "" });
                 }}
               >
                 <option disabled={true} selected={true}>
@@ -559,6 +593,7 @@ const AddJobs = () => {
                   fontSize: "12px",
                   color: "red",
                   marginTop: "-15px",
+                  marginLeft: "50px",
                 }}
               >
                 {error.subCategoryError}
@@ -571,6 +606,7 @@ const AddJobs = () => {
                 required
                 onChange={(e) => {
                   setLocation(e.target.value);
+                  setError({ ...error, locationError: "" });
                 }}
               />
               <label>Location</label>
@@ -602,6 +638,7 @@ const AddJobs = () => {
                 required
                 onChange={(e) => {
                   setDescription(e.target.value);
+                  setError({ ...error, descriptionError: "" });
                 }}
               />
               <label>Job Description</label>
@@ -633,6 +670,7 @@ const AddJobs = () => {
                 required
                 onChange={(e) => {
                   setAbout(e.target.value);
+                  setError({ ...error, aboutError: "" });
                 }}
               />
               <label>About the Role</label>
@@ -668,6 +706,7 @@ const AddJobs = () => {
                 required
                 onChange={(e) => {
                   setRequirements(e.target.value);
+                  setError({ ...error, requirementError: "" });
                 }}
               />
               <label>Requirements</label>
@@ -707,6 +746,7 @@ const AddJobs = () => {
                 required
                 onChange={(e) => {
                   setJobType(e.target.value);
+                  setError({ ...error, jobTypeError: "" });
                 }}
               >
                 <option disabled={true} selected={true}>
@@ -739,6 +779,7 @@ const AddJobs = () => {
                 required
                 onChange={(e) => {
                   setjobUrgency(e.target.value);
+                  setError({ ...error, jobUrgencyError: "" });
                 }}
               >
                 <option disabled={true} selected={true}>
@@ -777,6 +818,7 @@ const AddJobs = () => {
                 required
                 onChange={(e) => {
                   setPostedDate(e.target.value);
+                  setError({ ...error, postedDateError: "" });
                 }}
               />
               <label>Posted Date</label>
@@ -837,7 +879,7 @@ const AddJobs = () => {
             >
               Upload Poster <MdCloudUpload style={{ color: "red" }} />
             </span>
-            <div class="input-box">
+            {/* <div class="input-box">
               <input
                 type="file"
                 required
@@ -845,9 +887,68 @@ const AddJobs = () => {
                 autoFocus={true}
                 onChange={(e) => {
                   setDescImgUrl(e.target.files[0]);
+                  setError({ ...error, descImgUrlError: "" });
                 }}
               />
+            </div> */}
+
+            <div style={{ position: "relative" }}>
+              <label
+                htmlFor="customFileInput"
+                style={{
+                  cursor: "pointer",
+                  border: "1px solid #ccc",
+                  padding: "10px 20px",
+                  borderRadius: "5px",
+                  backgroundColor: "#f9f9f9",
+                  display: "inline-block",
+                  width: "100%",
+                }}
+              >
+                <span style={{ marginRight: "10px", fontWeight: "bold" }}>
+                  Choose File:
+                </span>
+                <input
+                  type="file"
+                  id="customFileInput"
+                  accept=".jpg, .jpeg, .png"
+                  style={{ display: "none" }}
+                  autoFocus={true}
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    setDescImgUrl(file);
+                    setError({ ...error, descImgUrlError: "" });
+                    document.getElementById("customFileName").textContent =
+                      file.name; // Set file name
+                  }}
+                />
+                <span
+                  id="customFileName"
+                  style={{ color: "#555", fontStyle: "italic" }}
+                >
+                  No file chosen
+                </span>
+              </label>
+              <span
+                style={{
+                  position: "absolute",
+                  right: "20px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  cursor: "pointer",
+                }}
+                onClick={() =>
+                  document.getElementById("customFileInput").click()
+                }
+              >
+                <i
+                  style={{ fontSize: "20px", color: "#1A97F5" }}
+                  className="fa fa-upload"
+                  aria-hidden="true"
+                ></i>
+              </span>
             </div>
+
             {error.descImgUrlError && (
               <span
                 className="error-message"
@@ -897,6 +998,7 @@ const AddJobs = () => {
                   required
                   onChange={(e) => {
                     setComEmail(e.target.value);
+                    setError({ ...error, comEmailError: "" });
                   }}
                 />
                 <label
@@ -978,6 +1080,7 @@ const AddJobs = () => {
                   required
                   onChange={(e) => {
                     setWebSiteUrl(e.target.value);
+                    setError({ ...error, webSiteUrlError: "" });
                   }}
                 />
                 <label
@@ -1080,23 +1183,15 @@ const AddJobs = () => {
           </div>
         </form>
       </div>
-      <div
+
+      <button
         className="submit-btn"
-        style={{
-          width: "25%",
-        }}
+        type="submit"
+        onClick={postJob}
+        disabled={btnLoading}
       >
-        <input
-          type="submit"
-          value="Post Job"
-          onClick={postJob}
-          style={{
-            width: "100%",
-            height: "100%",
-            cursor: "pointer",
-          }}
-        />
-      </div>
+        {btnLoading ? "Posting..." : "Post Job"}
+      </button>
       <Notifications notify={notify} setNotify={setNotify} />
     </div>
   );

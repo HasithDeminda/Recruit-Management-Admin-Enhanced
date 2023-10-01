@@ -3,12 +3,14 @@ import "./JobDetails.scss";
 import { FaBuilding, FaCalendarCheck, FaCalendarTimes } from "react-icons/fa";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-
+import { css } from "@emotion/react";
+import { PropagateLoader } from "react-spinners";
 import { ImLocation } from "react-icons/im";
 import { Container } from "react-bootstrap";
 
 const JobDetails = () => {
   const { id } = useParams();
+  const [loading, setLoading] = useState(true);
 
   const [_id, set_id] = useState("");
   const [jobTitle, setJobTitle] = useState("");
@@ -36,6 +38,7 @@ const JobDetails = () => {
 
   useEffect(() => {
     function getDetails() {
+      setLoading(true);
       axios
         .get(
           `https://rwa-webapp.azurewebsites.net/api/jobMgt/GetSpecificJob/${id}`
@@ -63,7 +66,7 @@ const JobDetails = () => {
           setCategory(res.data.job.category);
           setSubCategory(res.data.job.subCategory);
           setjobUrgency(res.data.job.jobUrgency);
-
+          setLoading(false);
           console.log(res.data.job);
         })
 
@@ -75,147 +78,185 @@ const JobDetails = () => {
     getDetails();
   }, []);
   return (
-    <div>
-      <Container className="job-details-container">
-        <div className="job-details-container__header">
-          <div className="job-details-container__header-left">
-            <div className="job-details-container__header-left-topic">
-              <span>{jobTitle}</span>
-            </div>
-
-            <div className="job-details-container__header-left-companydata">
-              <div className="job-details-container__header-left-companydata-company">
-                <FaBuilding
-                  style={{
-                    color: "#17bf9e",
-                  }}
-                />
-                <span>{companyName}</span>
-              </div>
-
-              <div className="job-details-container__header-left-companydata-location">
-                <ImLocation
-                  style={{
-                    color: "#17bf9e",
-                  }}
-                />
-                <span>{location}</span>
-              </div>
-            </div>
-
-            <div className="job-details-container__header-left-jobtype">
-              <div className="job-details-container__header-left-jobtype-time">
-                <button>{jobType}</button>
-              </div>
-
-              {/* {jobUrgency === "Urgent" ? ( */}
-              <div className="job-details-container__header-left-jobtype-urgency">
-                <button>Urgent</button>
-              </div>
-              {/* ) : null} */}
-            </div>
-          </div>
-          <div className="job-details-container__header-right">
-            <div className="job-details-container__header-right-image">
-              <img
-                src="https://res.cloudinary.com/desnqqj6a/image/upload/v1657546136/Resume_folder-bro_oa6te4.png"
-                alt=""
-              />
-            </div>
-          </div>
-        </div>
-
+    <>
+      {loading ? (
         <div
-          className="job-details-container__body"
+          className="loader"
           style={{
-            whiteSpace: "pre-wrap",
-            marginTop: "20px",
+            background: "rgba(255, 255, 255, 0.7)",
+            position: "fixed",
+            top: "50%",
+            left: "50%",
+            width: "100%",
+            height: "100%",
+            zIndex: 999,
           }}
         >
-          <div className="job-details-container__body-description">
-            <div className="job-details-container__body-description-header">
-              <h4>
-                <strong>Description</strong>
-              </h4>
-            </div>
-            {description}
-          </div>
-
-          <div
-            className="job-details-container__body-description"
-            style={{
-              whiteSpace: "pre-wrap",
-            }}
-          >
-            <div className="job-details-container__body-description-header">
-              <h4>
-                <strong>About the Role</strong>
-              </h4>
-            </div>
-            {about}
-          </div>
-
-          <div
-            className="job-details-container__body-description"
-            style={{
-              whiteSpace: "pre-wrap",
-            }}
-          >
-            <div className="job-details-container__body-description-header">
-              <h4>
-                <strong>Requirements</strong>
-              </h4>
-            </div>
-            {requirement}
-          </div>
+          <PropagateLoader
+            color={"#1A97F5"}
+            loading={loading}
+            css={override}
+            size={20}
+          />
         </div>
+      ) : (
+        <div>
+          <Container className="job-details-container">
+            <div className="job-details-container__header">
+              <div className="job-details-container__header-left">
+                <div className="job-details-container__header-left-topic">
+                  <span>{jobTitle}</span>
+                </div>
 
-        <div className="job-details-container__footer">
-          <div className="job-details-container__footer-content">
-            <div className="job-details-container__footer-content-left">
-              <img src={descImgUrl} alt="" />
-            </div>
-            <div className="job-details-container__footer-content-right">
-              <div className="job-details-container__footer-content-right-dates">
-                <div
-                  className="job-details-container__footer-content-right-dates-postedOn"
-                  style={{
-                    marginLeft: "-20px",
-                  }}
-                >
-                  <div className="job-details-container__footer-content-right-dates-postedOn-icon">
-                    <FaCalendarCheck />
+                <div className="job-details-container__header-left-companydata">
+                  <div className="job-details-container__header-left-companydata-company">
+                    <FaBuilding
+                      style={{
+                        color: "#17bf9e",
+                      }}
+                    />
+                    <span>{companyName}</span>
                   </div>
-                  <div className="job-details-container__footer-content-right-dates-postedOn-content">
-                    <div className="job-details-container__footer-content-right-dates-postedOn-content-title">
-                      Posted On
-                    </div>
-                    <div className="job-details-container__footer-content-right-dates-postedOn-content-datetime">
-                      {postedDate.slice(0, 10)}
-                    </div>
+
+                  <div className="job-details-container__header-left-companydata-location">
+                    <ImLocation
+                      style={{
+                        color: "#17bf9e",
+                      }}
+                    />
+                    <span>{location}</span>
                   </div>
                 </div>
 
-                <div className="job-details-container__footer-content-right-dates-experingon">
-                  <div className="job-details-container__footer-content-right-dates-experingon-icon">
-                    <FaCalendarTimes />
+                <div className="job-details-container__header-left-jobtype">
+                  <div className="job-details-container__header-left-jobtype-time">
+                    <button>{jobType}</button>
                   </div>
-                  <div className="job-details-container__footer-content-right-dates-experingon-content">
-                    <div className="job-details-container__footer-content-right-dates-experingon-content-title">
-                      Expering On
+
+                  {/* {jobUrgency === "Urgent" ? ( */}
+                  <div className="job-details-container__header-left-jobtype-urgency">
+                    <button>Urgent</button>
+                  </div>
+                  {/* ) : null} */}
+                </div>
+              </div>
+              <div className="job-details-container__header-right">
+                <div className="job-details-container__header-right-image">
+                  <img
+                    src="https://res.cloudinary.com/desnqqj6a/image/upload/v1657546136/Resume_folder-bro_oa6te4.png"
+                    alt=""
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div
+              className="job-details-container__body"
+              style={{
+                whiteSpace: "pre-wrap",
+                marginTop: "20px",
+              }}
+            >
+              <div className="job-details-container__body-description">
+                <div className="job-details-container__body-description-header">
+                  <h4>
+                    <strong>Description</strong>
+                  </h4>
+                </div>
+                {description}
+              </div>
+
+              <div
+                className="job-details-container__body-description"
+                style={{
+                  whiteSpace: "pre-wrap",
+                }}
+              >
+                <div className="job-details-container__body-description-header">
+                  <h4>
+                    <strong>About the Role</strong>
+                  </h4>
+                </div>
+                {about}
+              </div>
+
+              <div
+                className="job-details-container__body-description"
+                style={{
+                  whiteSpace: "pre-wrap",
+                }}
+              >
+                <div className="job-details-container__body-description-header">
+                  <h4>
+                    <strong>Requirements</strong>
+                  </h4>
+                </div>
+                {requirement}
+              </div>
+            </div>
+
+            <div className="job-details-container__footer">
+              <div className="job-details-container__footer-content">
+                <div className="job-details-container__footer-content-left">
+                  <img
+                    src={
+                      descImgUrl ||
+                      "https://media.istockphoto.com/id/1248674290/vector/we-are-hiring-door-signage-for-business-unlock-promotion-vector-design.jpg?s=612x612&w=0&k=20&c=1aJ8euYTbHSloLmNIszULFFZ9SV8H8_c0zs4gnihTv4="
+                    }
+                    alt=""
+                  />
+                </div>
+                <div className="job-details-container__footer-content-right">
+                  <div className="job-details-container__footer-content-right-dates">
+                    <div
+                      className="job-details-container__footer-content-right-dates-postedOn"
+                      style={{
+                        marginLeft: "-20px",
+                      }}
+                    >
+                      <div className="job-details-container__footer-content-right-dates-postedOn-icon">
+                        <FaCalendarCheck />
+                      </div>
+                      <div className="job-details-container__footer-content-right-dates-postedOn-content">
+                        <div className="job-details-container__footer-content-right-dates-postedOn-content-title">
+                          Posted On
+                        </div>
+                        <div className="job-details-container__footer-content-right-dates-postedOn-content-datetime">
+                          {postedDate.slice(0, 10)}
+                        </div>
+                      </div>
                     </div>
-                    <div className="job-details-container__footer-content-right-dates-experingon-content-datetime">
-                      {expDate.slice(0, 10)}
+
+                    <div className="job-details-container__footer-content-right-dates-experingon">
+                      <div className="job-details-container__footer-content-right-dates-experingon-icon">
+                        <FaCalendarTimes />
+                      </div>
+                      <div className="job-details-container__footer-content-right-dates-experingon-content">
+                        <div className="job-details-container__footer-content-right-dates-experingon-content-title">
+                          Expering On
+                        </div>
+                        <div className="job-details-container__footer-content-right-dates-experingon-content-datetime">
+                          {expDate.slice(0, 10)}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
+          </Container>
         </div>
-      </Container>
-    </div>
+      )}
+    </>
   );
 };
+
+const override = css`
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+`;
 
 export default JobDetails;

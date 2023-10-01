@@ -7,6 +7,7 @@ import Notifications from "../../../Components/Notifications";
 const ResetPw = () => {
   const [data, setData] = useState({ password: "", cpassword: "" });
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const UseParams = useParams();
   const link = UseParams.link;
@@ -23,6 +24,7 @@ const ResetPw = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       if (data.password !== data.cpassword) {
         setError("Passwords do not match");
@@ -46,6 +48,8 @@ const ResetPw = () => {
       ) {
         setError(error.response.data.message);
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -76,8 +80,12 @@ const ResetPw = () => {
                 className={styles.input}
               />
               {error && <div className={styles.error_msg}>{error}</div>}
-              <button type="submit" className={styles.green_btn}>
-                Reset
+              <button
+                type="submit"
+                disabled={loading}
+                className={styles.green_btn}
+              >
+                {loading ? "Resetting..." : "Reset"}
               </button>
             </form>
           </div>

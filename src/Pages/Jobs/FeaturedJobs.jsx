@@ -13,10 +13,13 @@ import { TbReportAnalytics } from "react-icons/tb";
 import { GiClick } from "react-icons/gi";
 import moment from "moment";
 import { FeaturedJobsReportGenerate } from "../../Components/Report/ReportGenarate";
+import { css } from "@emotion/react";
+import { PropagateLoader } from "react-spinners";
 
 const FeaturedJobs = () => {
   //Get id from local storage
   const userId = localStorage.getItem("Token");
+  const [loading, setLoading] = useState(true);
 
   const [fjobs, setFjobs] = useState([
     {
@@ -50,6 +53,7 @@ const FeaturedJobs = () => {
 
   useEffect(() => {
     const featuredJ = async () => {
+      setLoading(true);
       const allJobs = await axios
         .get("https://rwa-webapp.azurewebsites.net/api/jobMgt/GetALLJobs", {
           headers: {
@@ -82,6 +86,7 @@ const FeaturedJobs = () => {
         });
       }
       setFjobs(temp);
+      setLoading(false);
     };
     featuredJ();
   }, []);
@@ -212,7 +217,7 @@ const FeaturedJobs = () => {
               className="userlist-img"
               src={
                 params.row.descImgUrl ||
-                "https://us.123rf.com/450wm/pavelstasevich/pavelstasevich1811/pavelstasevich181101028/112815904-no-image-available-icon-flat-vector-illustration.jpg?ver=6"
+                "https://media.istockphoto.com/id/1248674290/vector/we-are-hiring-door-signage-for-business-unlock-promotion-vector-design.jpg?s=612x612&w=0&k=20&c=1aJ8euYTbHSloLmNIszULFFZ9SV8H8_c0zs4gnihTv4="
               }
               alt=""
               style={{
@@ -341,37 +346,130 @@ const FeaturedJobs = () => {
   ];
 
   return (
-    <div
-      style={{
-        overflowY: "hidden",
-        width: "95%",
-        margin: "auto",
-      }}
-    >
-      <div
-        style={{
-          width: "100%",
-          marginTop: "20px",
-          backgroundColor: "white",
-          padding: "25px",
-          borderRadius: "20px",
-        }}
-      >
+    <>
+      {loading ? (
         <div
+          className="loader"
           style={{
+            background: "rgba(255, 255, 255, 0.7)",
+            position: "fixed",
+            top: "50%",
+            left: "50%",
             width: "100%",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
+            height: "100%",
+            zIndex: 999,
           }}
         >
-          <div>
-            <Header category="Page" title="Featured Jobs 🧑‍💻" />
-          </div>
-          <span>
-            <Link to="/Jobs/new-job">
+          <PropagateLoader
+            color={"#1A97F5"}
+            loading={loading}
+            css={override}
+            size={20}
+          />
+        </div>
+      ) : (
+        <div style={{ overflowY: "hidden", width: "95%", margin: "auto" }}>
+          <div
+            style={{
+              width: "100%",
+              marginTop: "20px",
+              backgroundColor: "white",
+              padding: "25px",
+              borderRadius: "20px",
+            }}
+          >
+            <div
+              style={{
+                width: "100%",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <div>
+                <Header category="Page" title="Featured Jobs 🧑‍💻" />
+              </div>
+              <span>
+                <Link to="/Jobs/new-job">
+                  <button
+                    className="btn btn-primary"
+                    style={{
+                      backgroundColor: "#1A97F5",
+                      color: "white",
+                      borderRadius: "50px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      width: "180px",
+                      gap: "0.5rem",
+                      height: "50px",
+                      marginTop: "-10px",
+                    }}
+                  >
+                    <BiPlusCircle
+                      style={{
+                        fontSize: "1.5rem",
+                      }}
+                    />
+                    <span>Post New Job</span>
+                  </button>
+                </Link>
+              </span>
+            </div>
+            <br />
+            <div
+              className="search-reports"
+              style={{
+                width: "100%",
+                display: "flex",
+                justifyContent: "flex-end",
+                alignItems: "center",
+                marginBottom: "50px",
+              }}
+            >
+              <div
+                className="search-reports-container"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <input
+                  type="text"
+                  placeholder="Search"
+                  onChange={onSearch}
+                  style={{
+                    width: "300px",
+                    height: "40px",
+                    borderRadius: "10px",
+                    border: "1px solid #ccc",
+                    padding: "0 10px",
+                    outline: "none",
+                  }}
+                />
+                <button
+                  className="btn btn-primary"
+                  style={{
+                    backgroundColor: "#1A97F5",
+                    color: "white",
+                    borderRadius: "40px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    padding: "0 10px",
+                    width: "100px",
+                    height: "35px",
+                    borderRadius: "10px",
+                    marginLeft: "-102px",
+                  }}
+                >
+                  Search
+                </button>
+              </div>
+
               <button
                 className="btn btn-primary"
+                onClick={onPdfGeberate}
                 style={{
                   backgroundColor: "#1A97F5",
                   color: "white",
@@ -381,114 +479,47 @@ const FeaturedJobs = () => {
                   justifyContent: "center",
                   width: "180px",
                   gap: "0.5rem",
-                  height: "50px",
-                  marginTop: "-10px",
+                  height: "40px",
+                  marginLeft: "20px",
                 }}
               >
-                <BiPlusCircle
-                  style={{
-                    fontSize: "1.5rem",
-                  }}
-                />
-                <span>Post New Job</span>
+                <TbReportAnalytics />
+                Generate Report
               </button>
-            </Link>
-          </span>
-        </div>
-        <br />
-        <div
-          className="search-reports"
-          style={{
-            width: "100%",
-            display: "flex",
-            justifyContent: "flex-end",
-            alignItems: "center",
-            marginBottom: "50px",
-          }}
-        >
-          <div
-            className="search-reports-container"
-            style={{
-              display: "flex",
-              alignItems: "center",
-            }}
-          >
-            <input
-              type="text"
-              placeholder="Search"
-              onChange={onSearch}
-              style={{
-                width: "300px",
-                height: "40px",
-                borderRadius: "10px",
-                border: "1px solid #ccc",
-                padding: "0 10px",
-                outline: "none",
-              }}
-            />
-            <button
-              className="btn btn-primary"
-              style={{
-                backgroundColor: "#1A97F5",
-                color: "white",
-                borderRadius: "40px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                padding: "0 10px",
-                width: "100px",
-                height: "35px",
-                borderRadius: "10px",
-                marginLeft: "-102px",
-              }}
-            >
-              Search
-            </button>
+            </div>
+            <div style={{ height: 550, width: "100%", marginTop: "-30px" }}>
+              <DataGrid
+                rows={fjobs}
+                rowHeight={75}
+                columns={columns}
+                pageSize={5}
+                rowsPerPageOptions={[5]}
+                disablecheckboxSelection
+                disableSelectionOnClick
+                style={{
+                  overflowX: "auto",
+                  padding: "0px 0px 0px 20px",
+                }}
+              />
+            </div>
           </div>
-
-          <button
-            className="btn btn-primary"
-            onClick={onPdfGeberate}
-            style={{
-              backgroundColor: "#1A97F5",
-              color: "white",
-              borderRadius: "50px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              width: "180px",
-              gap: "0.5rem",
-              height: "40px",
-              marginLeft: "20px",
-            }}
-          >
-            <TbReportAnalytics />
-            Generate Report
-          </button>
-        </div>
-        <div style={{ height: 550, width: "100%", marginTop: "-30px" }}>
-          <DataGrid
-            rows={fjobs}
-            rowHeight={75}
-            columns={columns}
-            pageSize={5}
-            rowsPerPageOptions={[5]}
-            disablecheckboxSelection
-            disableSelectionOnClick
-            style={{
-              overflowX: "auto",
-              padding: "0px 0px 0px 20px",
-            }}
+          <Notifications notify={notify} setNotify={setNotify} />
+          <ConfirmDialog
+            confirmDialog={confirmDialog}
+            setConfirmDialog={setConfirmDialog}
           />
         </div>
-      </div>
-      <Notifications notify={notify} setNotify={setNotify} />
-      <ConfirmDialog
-        confirmDialog={confirmDialog}
-        setConfirmDialog={setConfirmDialog}
-      />
-    </div>
+      )}
+    </>
   );
 };
+
+const override = css`
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+`;
 
 export default FeaturedJobs;

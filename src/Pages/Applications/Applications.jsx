@@ -7,15 +7,19 @@ import "../../Pages/Announcements/Announcements.scss";
 import { Header } from "../../Components";
 import { TbReportAnalytics } from "react-icons/tb";
 import { AppliedJobReportGenerate } from "../../Components/Report/ReportGenarate";
+import { css } from "@emotion/react";
+import { PropagateLoader } from "react-spinners";
 
 const Applications = () => {
   //Get id from local storage
   const userId = localStorage.getItem("Token");
 
+  const [loading, setLoading] = useState(true);
   const [applications, setApplications] = useState([]);
 
   console.log(applications.jobId);
   useEffect(() => {
+    setLoading(true);
     const Users = async () => {
       const appliedjobs = await axios
         .get(
@@ -70,9 +74,7 @@ const Applications = () => {
         });
       }
       setApplications(temp);
-      console.log("====================================");
-      console.log(temp);
-      console.log("====================================");
+      setLoading(false);
     };
     Users();
   }, []);
@@ -266,123 +268,155 @@ const Applications = () => {
   ];
 
   return (
-    <div
-      style={{
-        overflowY: "hidden",
-        width: "95%",
-        margin: "auto",
-      }}
-    >
-      <div
-        style={{
-          width: "100%",
-          marginTop: "20px",
-          backgroundColor: "white",
-          padding: "25px",
-          borderRadius: "20px",
-        }}
-      >
+    <>
+      {loading ? (
         <div
+          className="loader"
           style={{
+            background: "rgba(255, 255, 255, 0.7)",
+            position: "fixed",
+            top: "50%",
+            left: "50%",
             width: "100%",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
+            height: "100%",
+            zIndex: 999,
           }}
         >
-          <div>
-            <Header category="Page" title="Applied Jobs 🧑‍💻" />
-          </div>
+          <PropagateLoader
+            color={"#1A97F5"}
+            loading={loading}
+            css={override}
+            size={20}
+          />
         </div>
-        <br />
+      ) : (
         <div
-          className="search-reports"
           style={{
-            width: "100%",
-            display: "flex",
-            justifyContent: "flex-end",
-            alignItems: "center",
-            marginBottom: "50px",
+            overflowY: "hidden",
+            width: "95%",
+            margin: "auto",
           }}
         >
           <div
-            className="search-reports-container"
             style={{
-              display: "flex",
-              alignItems: "center",
+              width: "100%",
+              marginTop: "20px",
+              backgroundColor: "white",
+              padding: "25px",
+              borderRadius: "20px",
             }}
           >
-            <input
-              type="text"
-              placeholder="Search"
-              onChange={onSearch}
+            <div
               style={{
-                width: "300px",
-                height: "40px",
-                borderRadius: "10px",
-                border: "1px solid #ccc",
-                padding: "0 10px",
-                outline: "none",
-              }}
-            />
-            <button
-              className="btn btn-primary"
-              style={{
-                backgroundColor: "#1A97F5",
-                color: "white",
-                borderRadius: "40px",
+                width: "100%",
                 display: "flex",
+                justifyContent: "space-between",
                 alignItems: "center",
-                justifyContent: "center",
-                padding: "0 10px",
-                width: "100px",
-                height: "35px",
-                borderRadius: "10px",
-                marginLeft: "-102px",
               }}
             >
-              Search
-            </button>
-          </div>
+              <div>
+                <Header category="Page" title="Applied Jobs 🧑‍💻" />
+              </div>
+            </div>
+            <br />
+            <div
+              className="search-reports"
+              style={{
+                width: "100%",
+                display: "flex",
+                justifyContent: "flex-end",
+                alignItems: "center",
+                marginBottom: "50px",
+              }}
+            >
+              <div
+                className="search-reports-container"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <input
+                  type="text"
+                  placeholder="Search"
+                  onChange={onSearch}
+                  style={{
+                    width: "300px",
+                    height: "40px",
+                    borderRadius: "10px",
+                    border: "1px solid #ccc",
+                    padding: "0 10px",
+                    outline: "none",
+                  }}
+                />
+                <button
+                  className="btn btn-primary"
+                  style={{
+                    backgroundColor: "#1A97F5",
+                    color: "white",
+                    borderRadius: "40px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    padding: "0 10px",
+                    width: "100px",
+                    height: "35px",
+                    borderRadius: "10px",
+                    marginLeft: "-102px",
+                  }}
+                >
+                  Search
+                </button>
+              </div>
 
-          <button
-            className="btn btn-primary"
-            onClick={onReportGenarate}
-            style={{
-              backgroundColor: "#1A97F5",
-              color: "white",
-              borderRadius: "50px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              width: "180px",
-              gap: "0.5rem",
-              height: "40px",
-              marginLeft: "20px",
-            }}
-          >
-            <TbReportAnalytics />
-            Generate Report
-          </button>
+              <button
+                className="btn btn-primary"
+                onClick={onReportGenarate}
+                style={{
+                  backgroundColor: "#1A97F5",
+                  color: "white",
+                  borderRadius: "50px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: "180px",
+                  gap: "0.5rem",
+                  height: "40px",
+                  marginLeft: "20px",
+                }}
+              >
+                <TbReportAnalytics />
+                Generate Report
+              </button>
+            </div>
+            <div style={{ height: 550, width: "100%", marginTop: "-30px" }}>
+              <DataGrid
+                rows={applications}
+                rowHeight={75}
+                columns={columns}
+                pageSize={5}
+                rowsPerPageOptions={[5]}
+                disablecheckboxSelection
+                disableSelectionOnClick
+                style={{
+                  overflowX: "auto",
+                  padding: "0px 0px 0px 20px",
+                }}
+              />
+            </div>
+          </div>
         </div>
-        <div style={{ height: 550, width: "100%", marginTop: "-30px" }}>
-          <DataGrid
-            rows={applications}
-            rowHeight={75}
-            columns={columns}
-            pageSize={5}
-            rowsPerPageOptions={[5]}
-            disablecheckboxSelection
-            disableSelectionOnClick
-            style={{
-              overflowX: "auto",
-              padding: "0px 0px 0px 20px",
-            }}
-          />
-        </div>
-      </div>
-    </div>
+      )}
+    </>
   );
 };
+
+const override = css`
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+`;
 
 export default Applications;

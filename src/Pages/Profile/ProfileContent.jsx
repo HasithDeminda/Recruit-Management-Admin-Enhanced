@@ -8,6 +8,8 @@ import { useEffect } from "react";
 import axios from "axios";
 import ConfirmDialog from "../../Components/ConfirmDialog";
 import Notifications from "../../Components/Notifications";
+import { css } from "@emotion/react";
+import { PropagateLoader } from "react-spinners";
 
 const ProfileContent = () => {
   //Alert Notification
@@ -24,6 +26,8 @@ const ProfileContent = () => {
     title: "",
     subTitle: "",
   });
+
+  const [loading, setLoading] = useState(true);
 
   function deleteHandler() {
     setConfirmDialog({
@@ -72,6 +76,7 @@ const ProfileContent = () => {
 
   //Send token to backend to get user data with header authorization
   const fetchUser = async () => {
+    setLoading(true);
     const res = await axios.get(
       `https://rwa-webapp.azurewebsites.net/api/admin/AdminProfile`,
       {
@@ -81,229 +86,260 @@ const ProfileContent = () => {
       }
     );
     setUser(res.data.logedAdmin);
-    console.log(res.data.logedAdmin);
+    setLoading(false);
   };
 
   useEffect(() => {
     fetchUser();
   }, []);
   return (
-    <div className="container-profile-content">
-      <div className="profile-header">
-        <div className="profile-header-topic">
-          <h1
-            style={{
-              fontSize: "2.0rem",
-              fontWeight: "semibold",
-              letterSpacing: "2px",
-            }}
-          >
-            My Profile
-          </h1>
+    <>
+      {loading ? (
+        <div
+          className="loader"
+          style={{
+            background: "rgba(255, 255, 255, 0.7)",
+            position: "fixed",
+            top: "50%",
+            left: "50%",
+            width: "100%",
+            height: "100%",
+            zIndex: 999,
+          }}
+        >
+          <PropagateLoader
+            color={"#1A97F5"}
+            loading={loading}
+            css={override}
+            size={20}
+          />
         </div>
-        <div className="profile-header-newAdmin">
-          <Link to="/newAdmin">
-            <button
-              className="btn btn-primary"
-              style={{
-                backgroundColor: "#1A97F5",
-                color: "white",
-                borderRadius: "50px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                width: "180px",
-                gap: "0.5rem",
-                height: "50px",
-                marginTop: "-10px",
-              }}
-            >
-              <BiPlusCircle
+      ) : (
+        <div className="container-profile-content">
+          <div className="profile-header">
+            <div className="profile-header-topic">
+              <h1
                 style={{
-                  fontSize: "1.5rem",
-                }}
-              />
-              <span>Add New Admin</span>
-            </button>
-          </Link>
-        </div>
-      </div>
-
-      <div className="profile-body">
-        <div className="profile-body-left">
-          <div className="profile-body-left-name">
-            <h1>{user.fullName}</h1>
-          </div>
-
-          <div className="profile-body-left-details">
-            <div className="profile-body-left-details-item">
-              <div
-                className="profile-body-left-details-email"
-                style={{
-                  marginRight: "50px",
+                  fontSize: "2.0rem",
+                  fontWeight: "semibold",
+                  letterSpacing: "2px",
                 }}
               >
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "start",
-                  }}
-                >
-                  <div>
-                    <FaEnvelope
-                      style={{
-                        color: "#00B341",
-                        marginRight: "20px",
-                        fontSize: "20px",
-                      }}
-                    />
-                  </div>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "start",
-                      flexDirection: "column",
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontSize: "18px",
-                        fontWeight: "500",
-                        letterSpacing: "2px",
-                      }}
-                    >
-                      Email{" "}
-                    </span>
-                    <span
-                      style={{
-                        fontSize: "16px",
-                        fontWeight: "400",
-                        color: "#596B65",
-                      }}
-                    >
-                      {user.email}
-                    </span>
-                  </div>
-                </div>
-              </div>
-              <div className="profile-body-left-details-phone">
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "start",
-                  }}
-                >
-                  <div>
-                    <FaPhoneAlt
-                      style={{
-                        color: "#00B341",
-                        marginRight: "20px",
-                        fontSize: "20px",
-                      }}
-                    />
-                  </div>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "start",
-                      flexDirection: "column",
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontSize: "18px",
-                        fontWeight: "500",
-                        letterSpacing: "2px",
-                      }}
-                    >
-                      Contact Number{" "}
-                    </span>
-                    <span
-                      style={{
-                        fontSize: "16px",
-                        fontWeight: "400",
-                        color: "#596B65",
-                      }}
-                    >
-                      {user.phoneNo
-                        ? user.phoneNo
-                        : "Insert Your Contact Number *"}
-                    </span>
-                  </div>
-                </div>
-              </div>
+                My Profile
+              </h1>
             </div>
-
-            <div className="createdAt">
-              <span>Created On: {user.createdAt?.split("T")[0]}</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="profile-body-right">
-          <div className="profile-body-right-image">
-            <img
-              src={
-                user.imageUrl ||
-                "https://us.123rf.com/450wm/pavelstasevich/pavelstasevich1811/pavelstasevich181101028/112815904-no-image-available-icon-flat-vector-illustration.jpg?ver=6"
-              }
-              alt="profile"
-            />
-          </div>
-
-          <div className="profile-body-right-Actions">
-            <Link to="/editAdminProfile">
-              <div className="profile-body-right-Actions-edit">
+            <div className="profile-header-newAdmin">
+              <Link to="/newAdmin">
                 <button
                   className="btn btn-primary"
                   style={{
+                    backgroundColor: "#1A97F5",
+                    color: "white",
+                    borderRadius: "50px",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    gap: "10px",
+                    width: "180px",
+                    gap: "0.5rem",
+                    height: "50px",
+                    marginTop: "-10px",
                   }}
                 >
-                  <FaPencilAlt />
-                  <span>Edit</span>
+                  <BiPlusCircle
+                    style={{
+                      fontSize: "1.5rem",
+                    }}
+                  />
+                  <span>Add New Admin</span>
                 </button>
-              </div>
-            </Link>
-            <div className="profile-body-right-Actions-delete">
-              <button
-                className="btn btn-primary"
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: "10px",
-                }}
-                onClick={() => {
-                  setConfirmDialog({
-                    isOpen: true,
-                    title: "Delete My Account!",
-                    subTitle: "Are you sure you want to delete this account?",
-                    onConfirm: () => {
-                      deleteHandler();
-                    },
-                  });
-                }}
-              >
-                <FaTrash />
-                <span>Delete</span>
-              </button>
+              </Link>
             </div>
           </div>
+
+          <div className="profile-body">
+            <div className="profile-body-left">
+              <div className="profile-body-left-name">
+                <h1>{user.fullName}</h1>
+              </div>
+
+              <div className="profile-body-left-details">
+                <div className="profile-body-left-details-item">
+                  <div
+                    className="profile-body-left-details-email"
+                    style={{
+                      marginRight: "50px",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "start",
+                      }}
+                    >
+                      <div>
+                        <FaEnvelope
+                          style={{
+                            color: "#00B341",
+                            marginRight: "20px",
+                            fontSize: "20px",
+                          }}
+                        />
+                      </div>
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "start",
+                          flexDirection: "column",
+                        }}
+                      >
+                        <span
+                          style={{
+                            fontSize: "18px",
+                            fontWeight: "500",
+                            letterSpacing: "2px",
+                          }}
+                        >
+                          Email{" "}
+                        </span>
+                        <span
+                          style={{
+                            fontSize: "16px",
+                            fontWeight: "400",
+                            color: "#596B65",
+                          }}
+                        >
+                          {user.email}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="profile-body-left-details-phone">
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "start",
+                      }}
+                    >
+                      <div>
+                        <FaPhoneAlt
+                          style={{
+                            color: "#00B341",
+                            marginRight: "20px",
+                            fontSize: "20px",
+                          }}
+                        />
+                      </div>
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "start",
+                          flexDirection: "column",
+                        }}
+                      >
+                        <span
+                          style={{
+                            fontSize: "18px",
+                            fontWeight: "500",
+                            letterSpacing: "2px",
+                          }}
+                        >
+                          Contact Number{" "}
+                        </span>
+                        <span
+                          style={{
+                            fontSize: "16px",
+                            fontWeight: "400",
+                            color: "#596B65",
+                          }}
+                        >
+                          {user.phoneNo
+                            ? user.phoneNo
+                            : "Insert Your Contact Number *"}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="createdAt">
+                  <span>Created On: {user.createdAt?.split("T")[0]}</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="profile-body-right">
+              <div className="profile-body-right-image">
+                <img
+                  src={
+                    user.imageUrl ||
+                    "https://us.123rf.com/450wm/pavelstasevich/pavelstasevich1811/pavelstasevich181101028/112815904-no-image-available-icon-flat-vector-illustration.jpg?ver=6"
+                  }
+                  alt="profile"
+                />
+              </div>
+
+              <div className="profile-body-right-Actions">
+                <Link to="/editAdminProfile">
+                  <div className="profile-body-right-Actions-edit">
+                    <button
+                      className="btn btn-primary"
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: "10px",
+                      }}
+                    >
+                      <FaPencilAlt />
+                      <span>Edit</span>
+                    </button>
+                  </div>
+                </Link>
+                <div className="profile-body-right-Actions-delete">
+                  <button
+                    className="btn btn-primary"
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "10px",
+                    }}
+                    onClick={() => {
+                      setConfirmDialog({
+                        isOpen: true,
+                        title: "Delete My Account!",
+                        subTitle:
+                          "Are you sure you want to delete this account?",
+                        onConfirm: () => {
+                          deleteHandler();
+                        },
+                      });
+                    }}
+                  >
+                    <FaTrash />
+                    <span>Delete</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <Notifications notify={notify} setNotify={setNotify} />
+          <ConfirmDialog
+            confirmDialog={confirmDialog}
+            setConfirmDialog={setConfirmDialog}
+          />
         </div>
-      </div>
-      <Notifications notify={notify} setNotify={setNotify} />
-      <ConfirmDialog
-        confirmDialog={confirmDialog}
-        setConfirmDialog={setConfirmDialog}
-      />
-    </div>
+      )}
+    </>
   );
 };
-
+const override = css`
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+`;
 export default ProfileContent;

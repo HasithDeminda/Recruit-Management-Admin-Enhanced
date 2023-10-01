@@ -4,10 +4,13 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import Notifications from "../../Components/Notifications";
+import { css } from "@emotion/react";
+import { PropagateLoader } from "react-spinners";
 
 const UpdateUsers = () => {
   //Get id from local storage
   const token = localStorage.getItem("Token");
+  const [loading, setLoading] = useState(true);
 
   //Fetch user data from backend
   const [firstName, setFirstName] = useState("");
@@ -34,6 +37,7 @@ const UpdateUsers = () => {
 
   //Send token to backend to get user data with header authorization
   const fetchUser = async () => {
+    setLoading(true);
     const res = await axios.get(
       `https://rwa-webapp.azurewebsites.net/api/userMgt/GetOneUser/${id}`,
       {
@@ -51,6 +55,7 @@ const UpdateUsers = () => {
     setFullName(res.data.user.fullName);
     setHeader(res.data.user.heading);
     setVerified(res.data.user.verified);
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -175,327 +180,359 @@ const UpdateUsers = () => {
     setUserUpdateError("");
   };
   return (
-    <div className="add-new-admin">
-      <div className="topic-admin">Edit User Profile</div>
-
-      <div
-        className="user-profile"
-        style={{
-          width: "1050px",
-          height: "160px",
-          boxShadow: "0px 4px 30px 2px rgba(0, 0, 0, 0.25)",
-          borderRadius: "20px",
-          margin: "25px 0px",
-          display: "flex",
-          alignItems: "center",
-        }}
-      >
+    <>
+      {loading ? (
         <div
-          className="user-profile-image"
+          className="loader"
           style={{
-            width: "120px",
-            height: "120px",
-            margin: "0px 20px",
+            background: "rgba(255, 255, 255, 0.7)",
+            position: "fixed",
+            top: "50%",
+            left: "50%",
+            width: "100%",
+            height: "100%",
+            zIndex: 999,
           }}
         >
-          <img
-            src={
-              imageUrl ||
-              "https://us.123rf.com/450wm/pavelstasevich/pavelstasevich1811/pavelstasevich181101028/112815904-no-image-available-icon-flat-vector-illustration.jpg?ver=6"
-            }
-            alt=""
-            style={{
-              width: "100%",
-              height: "100%",
-              borderRadius: "50%",
-              objectFit: "cover",
-            }}
+          <PropagateLoader
+            color={"#1A97F5"}
+            loading={loading}
+            css={override}
+            size={20}
           />
         </div>
-
-        <div
-          className="user-profile-details"
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            gap: "10px",
-          }}
-        >
-          <div
-            className="user-profile-details-name"
-            style={{
-              fontSize: "24px",
-              fontWeight: "bold",
-              color: "#000000",
-            }}
-          >
-            {fullName}
-          </div>
+      ) : (
+        <div className="add-new-admin">
+          <div className="topic-admin">Edit User Profile</div>
 
           <div
-            className="user-profile-details-header"
+            className="user-profile"
             style={{
-              fontSize: "16px",
-              fontWeight: 600,
-              color: "#596B65",
-            }}
-          >
-            {header ? header : "Candidate"}
-          </div>
-        </div>
-      </div>
-
-      <div
-        className="personal-info-container"
-        style={{
-          display: "flex",
-        }}
-      >
-        <form className="addNewAdmin-form" onSubmit={personalInfoUpdate}>
-          <div
-            className="form-left"
-            style={{
-              width: "100%",
-            }}
-          >
-            <div className="topic mb-4">Personal Information</div>
-            <div className="input-box">
-              <input
-                type="text"
-                required
-                value={firstName}
-                onChange={(e) => {
-                  setFirstName(e.target.value);
-                }}
-              />
-              <label>First Name</label>
-            </div>
-            {userUpdateError.firstNameError && (
-              <div
-                style={{
-                  fontSize: "12px",
-                  color: "red",
-                  marginTop: "-10px",
-                }}
-              >
-                {userUpdateError.firstNameError}
-              </div>
-            )}
-            <div className="input-box">
-              <input
-                type="text"
-                required
-                value={lastName}
-                onChange={(e) => {
-                  setLastName(e.target.value);
-                }}
-              />
-              <label>Last Name</label>
-            </div>
-            {userUpdateError.lastNameError && (
-              <div
-                style={{
-                  fontSize: "12px",
-                  color: "red",
-                  marginTop: "-10px",
-                }}
-              >
-                {userUpdateError.lastNameError}
-              </div>
-            )}
-
-            <div className="input-box">
-              <input
-                type="text"
-                value={phoneNo}
-                onChange={(e) => {
-                  setPhoneNo(e.target.value);
-                }}
-                maxLength="10"
-              />
-              <label>Contact Number</label>
-            </div>
-            {userUpdateError.phoneNoError && (
-              <div
-                style={{
-                  fontSize: "12px",
-                  color: "red",
-                  marginTop: "-10px",
-                }}
-              >
-                {userUpdateError.phoneNoError}
-              </div>
-            )}
-            <div className="input-box">
-              <input type="text" required value={email} />
-              <label>Email</label>
-            </div>
-
-            <div class="input-box">
-              <select
-                name="jobType"
-                id="jobType"
-                value={verified}
-                onChange={(e) => {
-                  setVerified(e.target.value);
-                }}
-                required
-              >
-                <option value="true">Active</option>
-                <option value="false">Inactive</option>
-              </select>
-              <label>User Status</label>
-            </div>
-            <div
-              className="button-container"
-              style={{
-                width: "100%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-evenly",
-              }}
-            >
-              <input
-                type="reset"
-                value="Reset"
-                onClick={onReset}
-                className="update-btn"
-                style={{
-                  cursor: "pointer",
-                  backgroundColor: "#17BF9E",
-                  width: "150px",
-                  color: "white",
-                  height: "40px",
-                  borderRadius: "20px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  filter: "drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))",
-                }}
-              />
-
-              <input
-                type="submit"
-                value="Update"
-                className="update-btn"
-                style={{
-                  cursor: "pointer",
-                  backgroundColor: "#1a97f5",
-                  width: "150px",
-                  color: "white",
-                  height: "40px",
-                  borderRadius: "20px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  filter: "drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))",
-                }}
-              />
-            </div>
-            <br />
-            <br />
-          </div>
-        </form>
-        <form onSubmit={SetTemporaryPassword}>
-          <div
-            className="vl"
-            style={{
-              borderLeft: "1px solid #888181",
-              height: "500px",
-              marginTop: "50px",
-            }}
-          ></div>
-          <div
-            className="form-right"
-            style={{
-              width: "100%",
+              width: "1050px",
+              height: "160px",
+              boxShadow: "0px 4px 30px 2px rgba(0, 0, 0, 0.25)",
+              borderRadius: "20px",
+              margin: "25px 0px",
+              display: "flex",
+              alignItems: "center",
             }}
           >
             <div
-              className="topic"
+              className="user-profile-image"
               style={{
-                marginTop: "90px",
+                width: "120px",
+                height: "120px",
+                margin: "0px 20px",
               }}
             >
-              Add Temporary Password
-            </div>
-
-            <div
-              className="input-box"
-              style={{
-                marginTop: "20px",
-              }}
-            >
-              <input
-                type="password"
-                required
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                }}
-              />
-              <label>Enter Temporary Password</label>
-            </div>
-
-            <div className="input-box">
-              <input
-                type="password"
-                required
-                onChange={(e) => {
-                  setConfirmPassword(e.target.value);
-                }}
-              />
-              <label>Confirm Temporary Password</label>
-            </div>
-            {error && (
-              <div
+              <img
+                src={
+                  imageUrl ||
+                  "https://us.123rf.com/450wm/pavelstasevich/pavelstasevich1811/pavelstasevich181101028/112815904-no-image-available-icon-flat-vector-illustration.jpg?ver=6"
+                }
+                alt=""
                 style={{
                   width: "100%",
-                  padding: "15px",
-                  margin: "5px 0",
-                  fontSize: "14px",
-                  backgroundColor: "#f34646",
-                  color: "white",
-                  borderRadius: "5px",
-                  textAlign: "center",
+                  height: "100%",
+                  borderRadius: "50%",
+                  objectFit: "cover",
                 }}
-              >
-                {error}
-              </div>
-            )}
-
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                marginTop: "20px",
-              }}
-            >
-              <input
-                type="submit"
-                className="update-btn"
-                style={{
-                  cursor: "pointer",
-                  backgroundColor: "#1a97f5",
-                  width: "150px",
-                  color: "white",
-                  height: "40px",
-                  borderRadius: "20px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  filter: "drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))",
-                }}
-                value="Update"
               />
             </div>
+
+            <div
+              className="user-profile-details"
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                gap: "10px",
+              }}
+            >
+              <div
+                className="user-profile-details-name"
+                style={{
+                  fontSize: "24px",
+                  fontWeight: "bold",
+                  color: "#000000",
+                }}
+              >
+                {fullName}
+              </div>
+
+              <div
+                className="user-profile-details-header"
+                style={{
+                  fontSize: "16px",
+                  fontWeight: 600,
+                  color: "#596B65",
+                }}
+              >
+                {header ? header : "Candidate"}
+              </div>
+            </div>
           </div>
-        </form>
-      </div>
-      <Notifications notify={notify} setNotify={setNotify} />
-    </div>
+
+          <div
+            className="personal-info-container"
+            style={{
+              display: "flex",
+            }}
+          >
+            <form className="addNewAdmin-form" onSubmit={personalInfoUpdate}>
+              <div
+                className="form-left"
+                style={{
+                  width: "100%",
+                }}
+              >
+                <div className="topic mb-4">Personal Information</div>
+                <div className="input-box">
+                  <input
+                    type="text"
+                    required
+                    value={firstName}
+                    onChange={(e) => {
+                      setFirstName(e.target.value);
+                    }}
+                  />
+                  <label>First Name</label>
+                </div>
+                {userUpdateError.firstNameError && (
+                  <div
+                    style={{
+                      fontSize: "12px",
+                      color: "red",
+                      marginTop: "-10px",
+                    }}
+                  >
+                    {userUpdateError.firstNameError}
+                  </div>
+                )}
+                <div className="input-box">
+                  <input
+                    type="text"
+                    required
+                    value={lastName}
+                    onChange={(e) => {
+                      setLastName(e.target.value);
+                    }}
+                  />
+                  <label>Last Name</label>
+                </div>
+                {userUpdateError.lastNameError && (
+                  <div
+                    style={{
+                      fontSize: "12px",
+                      color: "red",
+                      marginTop: "-10px",
+                    }}
+                  >
+                    {userUpdateError.lastNameError}
+                  </div>
+                )}
+
+                <div className="input-box">
+                  <input
+                    type="text"
+                    value={phoneNo}
+                    onChange={(e) => {
+                      setPhoneNo(e.target.value);
+                    }}
+                    maxLength="10"
+                  />
+                  <label>Contact Number</label>
+                </div>
+                {userUpdateError.phoneNoError && (
+                  <div
+                    style={{
+                      fontSize: "12px",
+                      color: "red",
+                      marginTop: "-10px",
+                    }}
+                  >
+                    {userUpdateError.phoneNoError}
+                  </div>
+                )}
+                <div className="input-box">
+                  <input type="text" required value={email} />
+                  <label>Email</label>
+                </div>
+
+                <div class="input-box">
+                  <select
+                    name="jobType"
+                    id="jobType"
+                    value={verified}
+                    onChange={(e) => {
+                      setVerified(e.target.value);
+                    }}
+                    required
+                  >
+                    <option value="true">Active</option>
+                    <option value="false">Inactive</option>
+                  </select>
+                  <label>User Status</label>
+                </div>
+                <div
+                  className="button-container"
+                  style={{
+                    width: "100%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-evenly",
+                  }}
+                >
+                  <input
+                    type="reset"
+                    value="Reset"
+                    onClick={onReset}
+                    className="update-btn"
+                    style={{
+                      cursor: "pointer",
+                      backgroundColor: "#17BF9E",
+                      width: "150px",
+                      color: "white",
+                      height: "40px",
+                      borderRadius: "20px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      filter: "drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))",
+                    }}
+                  />
+
+                  <input
+                    type="submit"
+                    value="Update"
+                    className="update-btn"
+                    style={{
+                      cursor: "pointer",
+                      backgroundColor: "#1a97f5",
+                      width: "150px",
+                      color: "white",
+                      height: "40px",
+                      borderRadius: "20px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      filter: "drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))",
+                    }}
+                  />
+                </div>
+                <br />
+                <br />
+              </div>
+            </form>
+            <form onSubmit={SetTemporaryPassword}>
+              <div
+                className="vl"
+                style={{
+                  borderLeft: "1px solid #888181",
+                  height: "500px",
+                  marginTop: "50px",
+                }}
+              ></div>
+              <div
+                className="form-right"
+                style={{
+                  width: "100%",
+                }}
+              >
+                <div
+                  className="topic"
+                  style={{
+                    marginTop: "90px",
+                  }}
+                >
+                  Add Temporary Password
+                </div>
+
+                <div
+                  className="input-box"
+                  style={{
+                    marginTop: "20px",
+                  }}
+                >
+                  <input
+                    type="password"
+                    required
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                    }}
+                  />
+                  <label>Enter Temporary Password</label>
+                </div>
+
+                <div className="input-box">
+                  <input
+                    type="password"
+                    required
+                    onChange={(e) => {
+                      setConfirmPassword(e.target.value);
+                    }}
+                  />
+                  <label>Confirm Temporary Password</label>
+                </div>
+                {error && (
+                  <div
+                    style={{
+                      width: "100%",
+                      padding: "15px",
+                      margin: "5px 0",
+                      fontSize: "14px",
+                      backgroundColor: "#f34646",
+                      color: "white",
+                      borderRadius: "5px",
+                      textAlign: "center",
+                    }}
+                  >
+                    {error}
+                  </div>
+                )}
+
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    marginTop: "20px",
+                  }}
+                >
+                  <input
+                    type="submit"
+                    className="update-btn"
+                    style={{
+                      cursor: "pointer",
+                      backgroundColor: "#1a97f5",
+                      width: "150px",
+                      color: "white",
+                      height: "40px",
+                      borderRadius: "20px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      filter: "drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))",
+                    }}
+                    value="Update"
+                  />
+                </div>
+              </div>
+            </form>
+          </div>
+          <Notifications notify={notify} setNotify={setNotify} />
+        </div>
+      )}
+    </>
   );
 };
+
+const override = css`
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+`;
 
 export default UpdateUsers;
